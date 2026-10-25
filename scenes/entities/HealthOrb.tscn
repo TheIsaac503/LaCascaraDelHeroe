@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://bq3x1km1oc6wt"]
+
+[ext_resource type="Script" uid="uid://b2ld3fqf8iuwm" path="res://scripts/health_orb.gd" id="1_3bf0t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8cq3s"]
+radius = 8.0
+
+[node name="HealthOrb" type="Area2D" unique_id=117983956]
+script = ExtResource("1_3bf0t")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=7745490]
+shape = SubResource("CircleShape2D_8cq3s")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=671481025]
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 5.0
+offset_bottom = 5.0
+color = Color(0.19607843, 0.65882355, 0.32156864, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1628470069]
+zoom = Vector2(2, 2)

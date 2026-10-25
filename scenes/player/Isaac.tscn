@@ -16,6 +16,9 @@ script = ExtResource("1_w3itj")
 shape = SubResource("RectangleShape2D_8cq3s")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1295983775]
+zoom = Vector2(2.5, 2.5)
+position_smoothing_speed = 4.0
+rotation_smoothing_speed = 4.0
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=62659781]
 area_mask = 3

@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://c5wiqb0rsy1fb" path="res://scenes/enemies/Enemy.tscn" id="2_nha0i"]
 [ext_resource type="PackedScene" uid="uid://bclj1oxwekr3h" path="res://scenes/entities/ranged_enemy.tscn" id="3_gyg6b"]
 [ext_resource type="Script" uid="uid://b3eay21lhwuk" path="res://scripts/pause_menu.gd" id="3_q24mn"]
+[ext_resource type="Script" uid="uid://dhjixtlbi8cov" path="res://scripts/world_manager.gd" id="5_dc040"]
 
 [sub_resource type="GDScript" id="GDScript_nha0i"]
 script/source = "extends Node2D
@@ -33,6 +34,10 @@ size = Vector2(40, 720)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3hn48"]
 size = Vector2(64, 64)
+
+[sub_resource type="TileSet" id="TileSet_dll7i"]
+physics_layer_0/collision_layer = 3
+physics_layer_0/collision_mask = 3
 
 [node name="Main" type="Node2D" unique_id=1768657729]
 script = SubResource("GDScript_nha0i")
@@ -118,5 +123,17 @@ offset_bottom = 65.0
 theme_override_colors/font_color = Color(0.9098039, 0.78431374, 0.4745098, 1)
 theme_override_font_sizes/font_size = 22
 text = "ALMA: IRA"
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=1973325288]
+
+[node name="Walls" type="TileMapLayer" parent="Ground" unique_id=866982959]
+tile_set = SubResource("TileSet_dll7i")
+
+[node name="WorldManager" type="Node2D" parent="." unique_id=1345317701]
+script = ExtResource("5_dc040")
+
+[node name="Amor_Sector" type="Node2D" parent="." unique_id=1262567467 groups=["sectors"]]
+
+[node name="Ira_Sector" type="Node2D" parent="." unique_id=2050588248 groups=["sectors"]]
 
 [connection signal="pressed" from="HUD/AttackButton" to="Isaac" method="_on_attack_button_pressed"]
