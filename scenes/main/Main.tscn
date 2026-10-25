@@ -104,4 +104,13 @@ grow_horizontal = 0
 grow_vertical = 0
 text = "ATACAR"
 
+[node name="SoulLabel" type="Label" parent="HUD" unique_id=2030536644]
+offset_left = 850.0
+offset_top = 25.0
+offset_right = 1150.0
+offset_bottom = 65.0
+theme_override_colors/font_color = Color(0.9098039, 0.78431374, 0.4745098, 1)
+theme_override_font_sizes/font_size = 22
+text = "ALMA: IRA"
+
 [connection signal="pressed" from="HUD/AttackButton" to="Isaac" method="_on_attack_button_pressed"]

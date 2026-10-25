@@ -9,6 +9,7 @@ var is_paused := false
 
 
 func _ready() -> void:
+	update_soul_label()
 	# Permite que el menú funcione incluso cuando el juego está pausado.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
@@ -108,7 +109,7 @@ func _create_button(button_text: String) -> Button:
 
 	button.add_theme_stylebox_override("normal", normal)
 	button.add_theme_stylebox_override("hover", hover)
-	button.add_theme_stylebox_override("pressed", hover)
+	button.add_theme_stylebox_override("pressed", hover)	
 	button.add_theme_stylebox_override("focus", hover)
 
 	return button
@@ -122,3 +123,17 @@ func _return_to_menu() -> void:
 
 func _exit_game() -> void:
 	get_tree().quit()
+	
+
+func update_soul_label() -> void:
+	var soul_label := get_node_or_null("SoulLabel") as Label
+
+	if soul_label == null:
+		return
+
+	var fragment := str(GameData.selected_fragment)
+
+	if fragment.is_empty():
+		fragment = "SIN ELEGIR"
+
+	soul_label.text = "ALMA: " + fragment.to_upper()
