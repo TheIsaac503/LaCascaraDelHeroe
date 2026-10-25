@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://bclj1oxwekr3h"]
+
+[ext_resource type="Script" uid="uid://bophu7gx63yr" path="res://scripts/ranged_enemy.gd" id="1_3mhp5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8cq3s"]
+
+[node name="RangedEnemy" type="CharacterBody2D" unique_id=53958601 groups=["enemies"]]
+script = ExtResource("1_3mhp5")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1859385746]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(0.2901961, 0.14509805, 0.45490196, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1243190958]
+shape = SubResource("RectangleShape2D_8cq3s")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=567210082]
+area_mask = 3

@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://h4jmw108rm8t" path="res://scenes/player/Isaac.tscn" id="1_u1xfj"]
 [ext_resource type="PackedScene" uid="uid://c5wiqb0rsy1fb" path="res://scenes/enemies/Enemy.tscn" id="2_nha0i"]
+[ext_resource type="PackedScene" uid="uid://bclj1oxwekr3h" path="res://scenes/entities/ranged_enemy.tscn" id="3_gyg6b"]
 [ext_resource type="Script" uid="uid://b3eay21lhwuk" path="res://scripts/pause_menu.gd" id="3_q24mn"]
 
 [sub_resource type="GDScript" id="GDScript_nha0i"]
@@ -43,7 +44,7 @@ offset_right = 640.0
 offset_bottom = 360.0
 color = Color(0.20392157, 0.23921569, 0.21960784, 1)
 
-[node name="Isaac" parent="." unique_id=778066013 groups=["player"] instance=ExtResource("1_u1xfj")]
+[node name="Isaac" parent="." unique_id=778066013 instance=ExtResource("1_u1xfj")]
 
 [node name="Walls" type="StaticBody2D" parent="." unique_id=889963259]
 
@@ -78,6 +79,11 @@ color = Color(0.4509804, 0.48235294, 0.5137255, 1)
 
 [node name="Enemy" parent="." unique_id=1835640054 instance=ExtResource("2_nha0i")]
 position = Vector2(200, 2)
+
+[node name="RangedEnemy" parent="." unique_id=53958601 instance=ExtResource("3_gyg6b")]
+position = Vector2(400, 0)
+collision_layer = 3
+collision_mask = 3
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1585643377]
 script = ExtResource("3_q24mn")

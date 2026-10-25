@@ -39,11 +39,20 @@ func _physics_process(delta: float) -> void:
 				else:
 					print("ERROR: Isaac no tiene la función take_damage()")
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
 	health -= amount
-	health = maxi(health, 0)
-	queue_redraw()
-
+	
+	# Usamos attacker_position para calcular la dirección del empuje
+	if attacker_position != Vector2.ZERO:
+		var knockback_dir := (global_position - attacker_position).normalized()
+		global_position += knockback_dir * 18.0
+	
+	_spawn_hit_sparks(global_position)
+	
+	modulate = Color(2.0, 0.4, 0.4)
+	var tween := create_tween()
+	tween.tween_property(self, "modulate", Color.WHITE, 0.12)
+	
 	if health <= 0:
 		queue_free()
 
@@ -64,3 +73,30 @@ func _draw() -> void:
 		Rect2(-15, -23, 30.0 * ratio, 4),
 		Color("#e74c3c")
 	)
+
+func _spawn_hit_sparks(hit_position: Vector2) -> void:
+	var particles := CPUParticles2D.new()
+	particles.emitting = true
+	particles.one_shot = true
+	particles.explosiveness = 0.9
+	particles.amount = 12
+	particles.lifetime = 0.25
+	particles.direction = Vector2.ZERO
+	particles.spread = 180.0
+	particles.gravity = Vector2.ZERO
+	particles.initial_velocity_min = 80.0
+	particles.initial_velocity_max = 160.0
+	particles.scale_amount_min = 2.0
+	particles.scale_amount_max = 4.0
+	particles.color = Color("#e8c879") # Color dorado/chispa
+	
+	if hit_position != Vector2.ZERO:
+		particles.global_position = hit_position
+	else:
+		particles.global_position = global_position
+		
+	get_parent().add_child(particles)
+	
+	# Eliminar el nodo de partículas automáticamente cuando termine
+	await get_tree().create_timer(0.3).timeout
+	particles.queue_free()

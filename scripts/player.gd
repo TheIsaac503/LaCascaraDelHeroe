@@ -8,6 +8,7 @@ signal health_changed(current_health: int, maximum_health: int)
 
 var health: int = 100
 var attack_cooldown: float = 0.0
+var sfx_player: AudioStreamPlayer2D
 # Velocidad de movimiento en píxeles por segundo.
 @export var speed: float = 180.0
 
@@ -20,6 +21,14 @@ func _ready() -> void:
 	health = max_health
 	add_to_group("player")
 	health_changed.emit(health, max_health)
+	
+	# Inicializamos el reproductor de audio
+	sfx_player = AudioStreamPlayer2D.new()
+	add_child(sfx_player)
+	
+	# Aseguramos el grupo y las estadísticas
+	add_to_group("player")
+	apply_soul_fragment()
 
 	var bar := get_tree().get_first_node_in_group("player_health_bar")
 
@@ -104,6 +113,7 @@ func _input(event: InputEvent) -> void:
 		attack()
 
 func attack() -> void:
+	play_attack_sfx()
 	if attack_cooldown > 0.0:
 		return
 
@@ -126,9 +136,28 @@ func attack() -> void:
 			if node.has_method("take_damage"):
 				node.take_damage(attack_damage)
 
-func take_damage(amount: int) -> void:
-	health = maxi(0, health - amount)
+func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
+	play_hurt_sfx()
+	health -= amount
+	health = clampi(health, 0, max_health)
 	health_changed.emit(health, max_health)
+	
+	# Retroceso / Knockback opcional
+	if attacker_position != Vector2.ZERO:
+		var knockback_dir := (global_position - attacker_position).normalized()
+		velocity = knockback_dir * 250.0
+		move_and_slide()
+	
+	# Parpadeo rojo visual al recibir golpe
+	_flash_red()
+	
+	if health <= 0:
+		die()
+		
+func _flash_red() -> void:
+	modulate = Color(1, 0.3, 0.3)
+	var tween := create_tween()
+	tween.tween_property(self, "modulate", Color.WHITE, 0.15)
 
 	if health <= 0:
 		# Reinicio provisional para poder seguir probando.
@@ -173,3 +202,59 @@ func apply_soul_fragment() -> void:
 			speed = 190.0
 	health = max_health
 	health_changed.emit(health, max_health)
+	
+func die() -> void:
+	# Emitimos la señal de vida en 0 para que el HUD muestre el Game Over automáticamente
+	health = 0
+	health_changed.emit(health, max_health)
+	
+	# Desactivar procesamiento y colisiones de Isaac mientras está el menú de derrota
+	set_physics_process(false)
+	hide()
+
+func play_attack_sfx() -> void:
+	# Creamos un tono sintetizado rápido para el ataque
+	var sample_rate := 44100.0
+	var duration := 0.08
+	var num_samples := int(sample_rate * duration)
+	
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_8_BITS
+	stream.mix_rate = int(sample_rate)
+	
+	var data := PackedByteArray()
+	data.resize(num_samples)
+	
+	for i in range(num_samples):
+		var t := float(i) / sample_rate
+		# Generamos un sonido de corte/ruido rápido
+		var freq := 800.0 - (t * 6000.0) 
+		var sample := int(sin(t * freq) * 127.0 * (1.0 - (t / duration)))
+		data[i] = clampi(sample + 128, 0, 255)
+		
+	stream.data = data
+	sfx_player.stream = stream
+	sfx_player.play()
+
+func play_hurt_sfx() -> void:
+	var sample_rate := 44100.0
+	var duration := 0.12
+	var num_samples := int(sample_rate * duration)
+	
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_8_BITS
+	stream.mix_rate = int(sample_rate)
+	
+	var data := PackedByteArray()
+	data.resize(num_samples)
+	
+	for i in range(num_samples):
+		var t := float(i) / sample_rate
+		# Tono grave descendente para representar el impacto recibido
+		var freq := 300.0 - (t * 2000.0)
+		var sample := int(sin(t * freq) * 127.0 * (1.0 - (t / duration)))
+		data[i] = clampi(sample + 128, 0, 255)
+		
+	stream.data = data
+	sfx_player.stream = stream
+	sfx_player.play()
