@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://b0h5c1o2j7c54"]
+
+[ext_resource type="PackedScene" uid="uid://h4jmw108rm8t" path="res://scenes/player/Isaac.tscn" id="1_u1xfj"]
+[ext_resource type="PackedScene" uid="uid://c5wiqb0rsy1fb" path="res://scenes/enemies/Enemy.tscn" id="2_nha0i"]
+[ext_resource type="Script" uid="uid://b3eay21lhwuk" path="res://scripts/pause_menu.gd" id="3_q24mn"]
+
+[sub_resource type="GDScript" id="GDScript_nha0i"]
+script/source = "extends Node2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8cq3s"]
+size = Vector2(1280, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dll7i"]
+size = Vector2(1280, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uo5bh"]
+size = Vector2(40, 720)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3jsg5"]
+size = Vector2(40, 720)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3hn48"]
+size = Vector2(64, 64)
+
+[node name="Main" type="Node2D" unique_id=1768657729]
+script = SubResource("GDScript_nha0i")
+
+[node name="Floor" type="ColorRect" parent="." unique_id=1207034249]
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.20392157, 0.23921569, 0.21960784, 1)
+
+[node name="Isaac" parent="." unique_id=778066013 groups=["player"] instance=ExtResource("1_u1xfj")]
+
+[node name="Walls" type="StaticBody2D" parent="." unique_id=889963259]
+
+[node name="WallTop" type="CollisionShape2D" parent="Walls" unique_id=1723401825]
+position = Vector2(0, -350)
+shape = SubResource("RectangleShape2D_8cq3s")
+
+[node name="WallBottom" type="CollisionShape2D" parent="Walls" unique_id=502065062]
+position = Vector2(0, 350)
+shape = SubResource("RectangleShape2D_dll7i")
+
+[node name="WallLeft" type="CollisionShape2D" parent="Walls" unique_id=74792006]
+position = Vector2(-630, 0)
+shape = SubResource("RectangleShape2D_uo5bh")
+
+[node name="WallRight" type="CollisionShape2D" parent="Walls" unique_id=965598563]
+position = Vector2(630, 0)
+shape = SubResource("RectangleShape2D_3jsg5")
+
+[node name="Pillar" type="StaticBody2D" parent="." unique_id=394339700]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pillar" unique_id=6560132]
+position = Vector2(150, 0)
+shape = SubResource("RectangleShape2D_3hn48")
+
+[node name="PillarVisual" type="ColorRect" parent="Pillar/CollisionShape2D" unique_id=319358290]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+color = Color(0.4509804, 0.48235294, 0.5137255, 1)
+
+[node name="Enemy" parent="." unique_id=1835640054 instance=ExtResource("2_nha0i")]
+position = Vector2(200, 2)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1585643377]
+script = ExtResource("3_q24mn")
+
+[node name="PlayerHealth" type="ProgressBar" parent="HUD" unique_id=1425025015 groups=["player_health_bar"]]
+offset_left = -96.0
+offset_top = -89.0
+offset_right = 124.0
+offset_bottom = -62.0
+value = 100.0
+
+[node name="AttackButton" type="Button" parent="HUD" unique_id=2078557607]
+visible = false
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -126.0
+offset_top = -105.0
+offset_right = -56.0
+offset_bottom = -74.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "ATACAR"
+
+[connection signal="pressed" from="HUD/AttackButton" to="Isaac" method="_on_attack_button_pressed"]
