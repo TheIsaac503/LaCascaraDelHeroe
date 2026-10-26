@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://ljtxbt2jlq01"]
 
+[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_3n7l4"]
+
 [node name="Bondad_Sector" type="Node2D" unique_id=1492852654 groups=["sectors"]]
+script = ExtResource("1_3n7l4")
+sector_type = "Bondad"
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
 

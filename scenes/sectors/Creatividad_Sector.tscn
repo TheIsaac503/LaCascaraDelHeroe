@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://cddnhxv5elyrl"]
 
+[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_bc3im"]
+
 [node name="Creatividad_Sector" type="Node2D" unique_id=1492852654]
+script = ExtResource("1_bc3im")
+sector_type = "Creatividad"
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
 

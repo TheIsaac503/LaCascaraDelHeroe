@@ -132,8 +132,4 @@ tile_set = SubResource("TileSet_dll7i")
 [node name="WorldManager" type="Node2D" parent="." unique_id=1345317701]
 script = ExtResource("5_dc040")
 
-[node name="Amor_Sector" type="Node2D" parent="." unique_id=1262567467 groups=["sectors"]]
-
-[node name="Ira_Sector" type="Node2D" parent="." unique_id=2050588248 groups=["sectors"]]
-
 [connection signal="pressed" from="HUD/AttackButton" to="Isaac" method="_on_attack_button_pressed"]

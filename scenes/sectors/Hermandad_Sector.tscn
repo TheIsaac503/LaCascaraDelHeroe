@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://biqey723wk1st"]
 
+[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_36qnk"]
+
 [node name="Hermandad_Sector" type="Node2D" unique_id=1492852654]
+script = ExtResource("1_36qnk")
+sector_type = "Hermandad"
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
 

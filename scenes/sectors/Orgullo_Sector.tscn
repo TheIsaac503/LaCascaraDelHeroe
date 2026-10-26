@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://cjdeo34pgybh5"]
 
+[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_vl4c8"]
+
 [node name="Orgullo_Sector" type="Node2D" unique_id=1492852654 groups=["sectors"]]
+script = ExtResource("1_vl4c8")
+sector_type = "Orgullo"
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
 

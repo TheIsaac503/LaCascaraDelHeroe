@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://coaprmgluv70j"]
 
+[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_5x0qb"]
+
 [node name="Ira_Sector" type="Node2D" unique_id=1492852654]
+script = ExtResource("1_5x0qb")
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
 
