@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://bpc2kfds1mnel"]
+
+[node name="Honor_Sector" type="Node2D" unique_id=1492852654]
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
+
+[node name="Walls" type="TileMapLayer" parent="." unique_id=829175143]
+
+[node name="MiniBoss_Spawn" type="Node2D" parent="." unique_id=315977495]

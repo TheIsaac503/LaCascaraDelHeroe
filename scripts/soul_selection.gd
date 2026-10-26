@@ -4,13 +4,13 @@ extends Control
 var selected: String = ""
 
 var descriptions := {
-	"Ira": "Reduce el tiempo de espera entre ataques.",
-	"Bondad": "Permite recuperar vida al derrotar enemigos.",
-	"Orgullo": "Aumenta el ataque tras permanecer sin recibir dano.",
-	"Honor": "Mejora las estadisticas de Isaac durante el combate.",
-	"Hermandad": "Aumenta la resistencia y favorece la supervivencia.",
-	"Creatividad": "Aumenta el dano de los ataques.",
-	"Amor": "Permite regenerar vida gradualmente."
+	"Ira": "Reduce el tiempo de carga de tus habilidades de ataque.",
+	"Bondad": "Obtienes un 0.25% de vida maxima adicional por cada NPC que logres rescatar.",
+	"Orgullo": "Tras 6s sin recibir dano, entras en 'Orgullo de Heroe': +2% de ataque y +1% de rapidez (acumulable x10).",
+	"Honor": "Desbloquea la Tabla de Honor. Al completarla obtienes la 'Bendicion de la Diosa' (+50% a todas tus estadisticas).",
+	"Hermandad": "Abre la posibilidad de no matar a los minijefes para obtener piezas del conjunto completo de la Hermandad.",
+	"Creatividad": "Habilita el sistema de alquimia y la creacion de nuevas armas.",
+	"Amor": "Aumenta tu autosanacion y regeneracion de vida en un 20%."
 }
 
 var description_label: Label

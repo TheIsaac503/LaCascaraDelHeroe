@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://d23l8fti5y2rp"]
+
+[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_pme2k"]
+
+[sub_resource type="TileSet" id="TileSet_2h3w7"]
+physics_layer_0/collision_layer = 1
+
+[node name="Amor_Sector" type="Node2D" unique_id=1492852654]
+script = ExtResource("1_pme2k")
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
+
+[node name="Walls" type="TileMapLayer" parent="." unique_id=829175143]
+tile_set = SubResource("TileSet_2h3w7")
+
+[node name="MiniBoss_Spawn" type="Node2D" parent="." unique_id=315977495]

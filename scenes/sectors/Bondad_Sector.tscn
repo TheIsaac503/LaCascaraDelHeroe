@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://ljtxbt2jlq01"]
+
+[node name="Bondad_Sector" type="Node2D" unique_id=1492852654 groups=["sectors"]]
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
+
+[node name="Walls" type="TileMapLayer" parent="." unique_id=829175143]
+
+[node name="MiniBoss_Spawn" type="Node2D" parent="." unique_id=315977495]
