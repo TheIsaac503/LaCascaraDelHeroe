@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/prison.gd" id="1_prison"]
+[ext_resource type="PackedScene" path="res://scenes/player/Isaac.tscn" id="2_isaac"]
+
+[node name="Prison" type="Node2D"]
+script = ExtResource("1_prison")
+
+[node name="Isaac" parent="." instance=ExtResource("2_isaac")]
+position = Vector2(-225, 35)

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dp3w3kvtekn4s"]
+
+[ext_resource type="Script" uid="uid://b8fedw38n2yxg" path="res://scripts/enemy.gd" id="1_ba2u8"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2h3w7"]
+radius = 18.0
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=1222894567]
+script = ExtResource("1_ba2u8")
+speed = 75.0
+max_health = 200
+contact_damage = 20
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=913429439]
+shape = SubResource("CircleShape2D_2h3w7")

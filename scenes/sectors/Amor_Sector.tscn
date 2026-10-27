@@ -1,17 +1,67 @@
-[gd_scene format=3 uid="uid://d23l8fti5y2rp"]
+[gd_scene format=3 uid="uid://b4qt03bq2qxi6"]
 
-[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_pme2k"]
+[ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_controller"]
+[ext_resource type="Script" uid="uid://d1shwqo5t0u5y" path="res://scripts/room_editor.gd" id="2_room"]
 
-[sub_resource type="TileSet" id="TileSet_2h3w7"]
-physics_layer_0/collision_layer = 1
-
-[node name="Amor_Sector" type="Node2D" unique_id=1492852654]
-script = ExtResource("1_pme2k")
+[node name="Amor_Sector" type="Node2D" unique_id=1337159106]
+script = ExtResource("1_controller")
 sector_type = "Amor"
 
-[node name="Ground" type="TileMapLayer" parent="." unique_id=1640786934]
+[node name="Sala_1" type="Node2D" parent="." unique_id=650960018]
+script = ExtResource("2_room")
+sector_color = Color(0.337255, 0.231373, 0.313725, 1)
+accent_color = Color(0.909804, 0.545098, 0.658824, 1)
+show_left_door = false
+show_top_door = false
+show_bottom_door = false
 
-[node name="Walls" type="TileMapLayer" parent="." unique_id=829175143]
-tile_set = SubResource("TileSet_2h3w7")
+[node name="Sala_2" type="Node2D" parent="." unique_id=1350312425]
+position = Vector2(460, 1)
+rotation = 1.5712742
+script = ExtResource("2_room")
+room_number = 2
+room_title = "PRIMER COMBATE"
+sector_color = Color(0.337255, 0.231373, 0.313725, 1)
+accent_color = Color(0.909804, 0.545098, 0.658824, 1)
+show_left_door = false
 
-[node name="MiniBoss_Spawn" type="Node2D" parent="." unique_id=315977495]
+[node name="Sala_3" type="Node2D" parent="." unique_id=1883465899]
+position = Vector2(458, 462)
+script = ExtResource("2_room")
+room_number = 3
+room_title = "PRISIONEROS"
+sector_color = Color(0.337255, 0.231373, 0.313725, 1)
+accent_color = Color(0.909804, 0.545098, 0.658824, 1)
+show_bottom_door = false
+
+[node name="Sala_4" type="Node2D" parent="." unique_id=732536807]
+position = Vector2(921, 3)
+script = ExtResource("2_room")
+room_number = 4
+room_title = "ZONA PELIGROSA"
+sector_color = Color(0.337255, 0.231373, 0.313725, 1)
+accent_color = Color(0.909804, 0.545098, 0.658824, 1)
+show_top_door = false
+show_bottom_door = false
+
+[node name="Sala_5" type="Node2D" parent="." unique_id=294923218]
+position = Vector2(1480, 7)
+script = ExtResource("2_room")
+room_number = 5
+room_title = "ANTESALA DEL JEFE"
+sector_color = Color(0.337255, 0.231373, 0.313725, 1)
+accent_color = Color(0.909804, 0.545098, 0.658824, 1)
+show_top_door = false
+show_bottom_door = false
+
+[node name="Sala_6" type="Node2D" parent="." unique_id=254132190]
+position = Vector2(1940.0002, 6)
+rotation = 1.5698254
+script = ExtResource("2_room")
+room_number = 6
+room_title = "JEFE DEL SECTOR"
+sector_color = Color(0.337255, 0.231373, 0.313725, 1)
+accent_color = Color(0.909804, 0.545098, 0.658824, 1)
+show_left_door = false
+show_right_door = false
+show_top_door = false

@@ -41,6 +41,7 @@ func _physics_process(delta: float) -> void:
 
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
 	health -= amount
+	queue_redraw()
 	
 	# Usamos attacker_position para calcular la dirección del empuje
 	if attacker_position != Vector2.ZERO:
