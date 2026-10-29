@@ -88,12 +88,12 @@ func _build_hud() -> void:
 
 func _process(_delta: float) -> void:
     if is_instance_valid(player) and player.global_position.distance_to(to_global(exit_position)) < 70.0:
-        status_label.text = "Presiona E para abrir la salida y elegir tu fragmento"
+        status_label.text = "Presiona E para salir del calabozo e ir a tu sector"
     else:
-        status_label.text = "Explora el calabozo | WASD/flechas: moverte | Espacio/clic: atacar | E: interactuar"
+        status_label.text = "Explora el calabozo | WASD/flechas: moverte | Espacio/clic: atacar | E: salir"
 
 func _unhandled_input(event: InputEvent) -> void:
     if event.is_action_pressed("interact") and is_instance_valid(player):
         if player.global_position.distance_to(to_global(exit_position)) < 70.0:
             GameData.intro_completed = true
-            get_tree().change_scene_to_file("res://scenes/ui/SoulSelection.tscn")
+            get_tree().change_scene_to_file("res://scenes/main/Main.tscn")

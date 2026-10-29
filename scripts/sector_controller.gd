@@ -11,6 +11,7 @@ const WALL_THICKNESS := 24.0
 const DOOR_GAP := 104.0
 const ENEMY_SCENE := preload("res://scenes/enemies/Enemy.tscn")
 const NPC_SCRIPT := preload("res://scripts/rescue_npc.gd")
+const PORTAL_SCRIPT := preload("res://scripts/teleport_portal.gd")
 
 var palette := {
 	"Ira": Color("#4b2928"),
@@ -40,67 +41,48 @@ func _ready() -> void:
 	_spawn_room_contents()
 
 func _draw() -> void:
-	if Engine.is_editor_hint():
-		return
-	var floor_color: Color = palette.get(sector_type, Color("#343944"))
-	var accent_color: Color = accent.get(sector_type, Color("#d4bd83"))
-	for room_index in range(6):
-		var center_x := float(room_index) * ROOM_WIDTH
-		var room_rect := Rect2(center_x - ROOM_WIDTH / 2.0, -ROOM_HEIGHT / 2.0, ROOM_WIDTH, ROOM_HEIGHT)
-		draw_rect(room_rect, floor_color)
-		# Losas y marcas de desgaste para que cada habitacion tenga textura.
-		for x_step in range(1, 7):
-			var x := room_rect.position.x + float(x_step) * ROOM_WIDTH / 7.0
-			draw_line(Vector2(x, -ROOM_HEIGHT / 2.0 + 18), Vector2(x, ROOM_HEIGHT / 2.0 - 18), Color(0.08, 0.09, 0.12, 0.22), 2.0)
-		for y_step in range(1, 4):
-			var y := -ROOM_HEIGHT / 2.0 + float(y_step) * ROOM_HEIGHT / 4.0
-			draw_line(Vector2(room_rect.position.x + 18, y), Vector2(room_rect.end.x - 18, y), Color(0.08, 0.09, 0.12, 0.2), 2.0)
-		# Bordes de piedra.
-		draw_rect(Rect2(room_rect.position.x, room_rect.position.y, ROOM_WIDTH, WALL_THICKNESS), Color("#20232d"))
-		draw_rect(Rect2(room_rect.position.x, ROOM_HEIGHT / 2.0 - WALL_THICKNESS, ROOM_WIDTH, WALL_THICKNESS), Color("#20232d"))
-		if room_index > 0 or not is_first_sector:
-			_draw_side_wall(center_x - ROOM_WIDTH / 2.0, false)
-		if room_index < 5 or not is_last_sector:
-			_draw_side_wall(center_x + ROOM_WIDTH / 2.0, false)
-		# Antorchas/piedras decorativas en esquinas.
-		draw_circle(Vector2(center_x - ROOM_WIDTH / 2.0 + 34, -ROOM_HEIGHT / 2.0 + 38), 8, accent_color.darkened(0.25))
-		draw_circle(Vector2(center_x + ROOM_WIDTH / 2.0 - 34, -ROOM_HEIGHT / 2.0 + 38), 8, accent_color.darkened(0.25))
-		var room_title := "SALA " + str(room_index + 1)
-		if room_index == 5:
-			room_title = "SALA 6 - JEFE"
-		draw_string(ThemeDB.fallback_font, Vector2(center_x - 70, -ROOM_HEIGHT / 2.0 + 55), room_title, HORIZONTAL_ALIGNMENT_CENTER, 140, 14, accent_color)
-		if room_index == 2:
-			draw_string(ThemeDB.fallback_font, Vector2(center_x - 90, ROOM_HEIGHT / 2.0 - 45), "PRISIONEROS", HORIZONTAL_ALIGNMENT_CENTER, 180, 12, accent_color)
-		if room_index == 4:
-			draw_string(ThemeDB.fallback_font, Vector2(center_x - 90, ROOM_HEIGHT / 2.0 - 45), "ANTESALA", HORIZONTAL_ALIGNMENT_CENTER, 180, 12, accent_color)
-
-func _draw_side_wall(x: float, unused: bool) -> void:
-	var wall_color := Color("#20232d")
-	draw_rect(Rect2(x - WALL_THICKNESS / 2.0, -ROOM_HEIGHT / 2.0, WALL_THICKNESS, (ROOM_HEIGHT - DOOR_GAP) / 2.0), wall_color)
-	draw_rect(Rect2(x - WALL_THICKNESS / 2.0, DOOR_GAP / 2.0, WALL_THICKNESS, (ROOM_HEIGHT - DOOR_GAP) / 2.0), wall_color)
+	# El suelo y la decoracion los dibuja cada nodo Sala_1...Sala_6.
+	# Asi se respeta la distribucion manual que se ve en el editor 2D.
+	pass
 
 func _build_room_collisions() -> void:
-	for room_index in range(6):
-		var center_x := float(room_index) * ROOM_WIDTH
-		_add_wall(Vector2(center_x, -ROOM_HEIGHT / 2.0), Vector2(ROOM_WIDTH, WALL_THICKNESS))
-		_add_wall(Vector2(center_x, ROOM_HEIGHT / 2.0), Vector2(ROOM_WIDTH, WALL_THICKNESS))
-		var left_is_open := room_index > 0 or not is_first_sector
-		var right_is_open := room_index < 5 or not is_last_sector
-		if left_is_open:
-			_add_side_segments(center_x - ROOM_WIDTH / 2.0)
-		else:
-			_add_wall(Vector2(center_x - ROOM_WIDTH / 2.0, 0), Vector2(WALL_THICKNESS, ROOM_HEIGHT))
-		if right_is_open:
-			_add_side_segments(center_x + ROOM_WIDTH / 2.0)
-		else:
-			_add_wall(Vector2(center_x + ROOM_WIDTH / 2.0, 0), Vector2(WALL_THICKNESS, ROOM_HEIGHT))
+	for room in _get_room_nodes():
+		var left_open := bool(room.get("show_left_door"))
+		var right_open := bool(room.get("show_right_door"))
+		var top_open := bool(room.get("show_top_door"))
+		var bottom_open := bool(room.get("show_bottom_door"))
+		_add_vertical_room_wall(room, -ROOM_WIDTH / 2.0 + WALL_THICKNESS / 2.0, left_open)
+		_add_vertical_room_wall(room, ROOM_WIDTH / 2.0 - WALL_THICKNESS / 2.0, right_open)
+		_add_horizontal_room_wall(room, -ROOM_HEIGHT / 2.0 + WALL_THICKNESS / 2.0, top_open)
+		_add_horizontal_room_wall(room, ROOM_HEIGHT / 2.0 - WALL_THICKNESS / 2.0, bottom_open)
 
-func _add_side_segments(x: float) -> void:
-	var segment_height := (ROOM_HEIGHT - DOOR_GAP) / 2.0
-	_add_wall(Vector2(x, -DOOR_GAP / 2.0 - segment_height / 2.0), Vector2(WALL_THICKNESS, segment_height))
-	_add_wall(Vector2(x, DOOR_GAP / 2.0 + segment_height / 2.0), Vector2(WALL_THICKNESS, segment_height))
+func _get_room_nodes() -> Array[Node2D]:
+	var rooms: Array[Node2D] = []
+	for child in get_children():
+		if child is Node2D and child.name.begins_with("Sala_"):
+			rooms.append(child as Node2D)
+	rooms.sort_custom(func(a: Node2D, b: Node2D) -> bool:
+		return int(str(a.name).trim_prefix("Sala_")) < int(str(b.name).trim_prefix("Sala_"))
+	)
+	return rooms
 
-func _add_wall(wall_position: Vector2, wall_size: Vector2) -> void:
+func _add_vertical_room_wall(room: Node2D, x: float, door_open: bool) -> void:
+	if door_open:
+		var segment_height := (ROOM_HEIGHT - DOOR_GAP) / 2.0
+		_add_wall_to_room(room, Vector2(x, -ROOM_HEIGHT / 2.0 + segment_height / 2.0), Vector2(WALL_THICKNESS, segment_height))
+		_add_wall_to_room(room, Vector2(x, DOOR_GAP / 2.0 + segment_height / 2.0), Vector2(WALL_THICKNESS, segment_height))
+	else:
+		_add_wall_to_room(room, Vector2(x, 0), Vector2(WALL_THICKNESS, ROOM_HEIGHT))
+
+func _add_horizontal_room_wall(room: Node2D, y: float, door_open: bool) -> void:
+	if door_open:
+		var segment_width := (ROOM_WIDTH - DOOR_GAP) / 2.0
+		_add_wall_to_room(room, Vector2(-ROOM_WIDTH / 2.0 + segment_width / 2.0, y), Vector2(segment_width, WALL_THICKNESS))
+		_add_wall_to_room(room, Vector2(DOOR_GAP / 2.0 + segment_width / 2.0, y), Vector2(segment_width, WALL_THICKNESS))
+	else:
+		_add_wall_to_room(room, Vector2(0, y), Vector2(ROOM_WIDTH, WALL_THICKNESS))
+
+func _add_wall_to_room(room: Node2D, wall_position: Vector2, wall_size: Vector2) -> void:
 	var body := StaticBody2D.new()
 	body.position = wall_position
 	body.collision_layer = 1
@@ -110,27 +92,41 @@ func _add_wall(wall_position: Vector2, wall_size: Vector2) -> void:
 	shape.size = wall_size
 	shape_node.shape = shape
 	body.add_child(shape_node)
-	add_child(body)
+	room.add_child(body)
 
 func _spawn_room_contents() -> void:
-	# Las salas 2 a 5 contienen enemigos; la sexta reserva su centro al minijefe.
+	var rooms := _get_room_nodes()
+	if rooms.size() < 6:
+		push_warning("El sector " + sector_type + " no tiene sus seis nodos Sala_1 a Sala_6.")
+		return
+	# Los enemigos se crean como hijos de su sala: no pueden perseguir a Isaac a otra.
 	var enemy_positions := {
-		1: [Vector2(-55, -25)],
-		2: [Vector2(-70, 25), Vector2(75, -25)],
-		3: [Vector2(-65, -35), Vector2(65, 35)],
-		4: [Vector2(-100, 0), Vector2(0, -35), Vector2(100, 20)]
+		2: [Vector2(-55, -25)],
+		3: [Vector2(-70, 25), Vector2(75, -25)],
+		4: [Vector2(-65, -35), Vector2(65, 35)],
+		5: [Vector2(-100, 0), Vector2(0, -35), Vector2(100, 20)]
 	}
-	for room_index in enemy_positions.keys():
-		for local_offset in enemy_positions[room_index]:
-			var enemy = ENEMY_SCENE.instantiate()
-			enemy.position = Vector2(float(room_index) * ROOM_WIDTH, 0) + local_offset
-			add_child(enemy)
+	for room_number in enemy_positions.keys():
+		var room := get_node_or_null("Sala_" + str(room_number)) as Node2D
+		if room == null:
+			continue
+		for local_offset in enemy_positions[room_number]:
+			var enemy := ENEMY_SCENE.instantiate()
+			enemy.position = local_offset
+			enemy.set("confined_to_room", true)
+			var enemy_extents := Vector2(ROOM_WIDTH / 2.0 - 42.0, ROOM_HEIGHT / 2.0 - 42.0)
+			var room_angle := absf(wrapf(room.global_rotation, -PI, PI))
+			if room_angle > PI / 4.0 and room_angle < 3.0 * PI / 4.0:
+				enemy_extents = Vector2(enemy_extents.y, enemy_extents.x)
+			enemy.set("room_half_extents", enemy_extents)
+			room.add_child(enemy)
+			enemy.set("confined_center_global", room.global_position)
 	var npc := Node2D.new()
 	npc.name = "RescueNPC_" + sector_type
 	npc.set_script(NPC_SCRIPT)
-	npc.position = Vector2(2.0 * ROOM_WIDTH, 15)
+	npc.position = Vector2(0, 15)
 	npc.set("npc_name", "Prisionero de " + sector_type)
-	add_child(npc)
+	rooms[2].add_child(npc)
 	_spawn_boss()
 
 func _spawn_boss() -> void:
@@ -148,6 +144,33 @@ func _spawn_boss() -> void:
 	var boss_scene := load(boss_path) as PackedScene
 	var boss_instance := boss_scene.instantiate()
 	boss_instance.name = "BossRoom6_" + boss_name
-	boss_instance.position = Vector2(5.0 * ROOM_WIDTH, 0)
-	add_child(boss_instance)
-	print("Minijefe ", boss_name, " colocado en la sala 6 del sector ", sector_type)
+	boss_instance.set("boss_display_name", boss_name)
+	boss_instance.set("sector_type", sector_type)
+	boss_instance.set("confined_to_room", true)
+	var boss_room := get_node_or_null("Sala_6") as Node2D
+	if boss_room == null:
+		push_warning("No se encontro Sala_6 en el sector " + sector_type)
+		return
+	var is_rotated := absf(wrapf(boss_room.global_rotation, -PI, PI)) > PI / 4.0 and absf(wrapf(boss_room.global_rotation, -PI, PI)) < 3.0 * PI / 4.0
+	var half_extents := Vector2(ROOM_WIDTH / 2.0 - 42.0, ROOM_HEIGHT / 2.0 - 42.0)
+	if is_rotated:
+		half_extents = Vector2(half_extents.y, half_extents.x)
+	boss_instance.set("room_half_extents", half_extents)
+	boss_instance.position = Vector2.ZERO
+	boss_room.add_child(boss_instance)
+	boss_instance.set("confined_center_global", boss_room.global_position)
+	print("Minijefe ", boss_name, " colocado y limitado a la sala 6 del sector ", sector_type)
+	_spawn_teleport_portal(boss_room)
+
+func _spawn_teleport_portal(boss_room: Node2D) -> void:
+	var portal := Area2D.new()
+	portal.name = "PortalSectorAleatorio_" + sector_type
+	portal.set_script(PORTAL_SCRIPT)
+	portal.set("source_sector", sector_type)
+	portal.position = Vector2(ROOM_WIDTH / 2.0 - 72.0, ROOM_HEIGHT / 2.0 - 72.0)
+	var collision := CollisionShape2D.new()
+	var circle := CircleShape2D.new()
+	circle.radius = 30.0
+	collision.shape = circle
+	portal.add_child(collision)
+	boss_room.add_child(portal)

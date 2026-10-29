@@ -1,15 +1,44 @@
 [gd_scene format=3 uid="uid://dw7m2mrbm87ma"]
 
 [ext_resource type="Script" uid="uid://b8fedw38n2yxg" path="res://scripts/enemy.gd" id="1_c6p8e"]
+[ext_resource type="Texture2D" uid="uid://2hlaqy3ugmwl" path="res://assets/sprites/sprites_sectores/minijefes/jefe_orgullo.png" id="2_u61ga"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2h3w7"]
-radius = 18.0
+radius = 30.0
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_sirbos"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_u61ga")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_u61ga")
+}],
+"loop": 1,
+"name": &"mover",
+"speed": 5.0
+}]
 
 [node name="CharacterBody2D" type="CharacterBody2D" unique_id=1222894567]
 script = ExtResource("1_c6p8e")
 speed = 75.0
 max_health = 200
 contact_damage = 20
+bar_offset_y = -66.0
+bar_width = 70.0
+contact_range = 50.0
+pulse_amount = 0.03
+bob_amount = 2.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=913429439]
 shape = SubResource("CircleShape2D_2h3w7")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1593842711]
+sprite_frames = SubResource("SpriteFrames_sirbos")
+animation = &"mover"

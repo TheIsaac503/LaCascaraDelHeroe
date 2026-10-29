@@ -8,6 +8,9 @@ var rescued_npcs: int = 0
 var amy_spared := false
 var spared_bosses: Array[String] = []
 var brotherhood_set_pieces: Array[String] = []
+var sector_positions: Dictionary = {}
+var starting_sector: String = ""
+var cleared_sectors: Array[String] = []
 
 const BOSS_MAPPING := {
     "Ira": "Radius",
@@ -31,6 +34,13 @@ func reset_game() -> void:
     amy_spared = false
     spared_bosses.clear()
     brotherhood_set_pieces.clear()
+    sector_positions.clear()
+    starting_sector = ""
+    cleared_sectors.clear()
+
+func mark_sector_cleared(sector_name: String) -> void:
+    if not cleared_sectors.has(sector_name):
+        cleared_sectors.append(sector_name)
 
 func choose_fragment(fragment_name: String) -> void:
     selected_fragment = fragment_name

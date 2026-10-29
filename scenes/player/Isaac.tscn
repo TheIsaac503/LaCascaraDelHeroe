@@ -1,16 +1,124 @@
 [gd_scene format=3 uid="uid://h4jmw108rm8t"]
 
 [ext_resource type="Script" uid="uid://csx3iuguo8u8x" path="res://scripts/player.gd" id="1_w3itj"]
+[ext_resource type="Texture2D" uid="uid://dktod680e0mrw" path="res://assets/sprites/personaje/ataque_01.png" id="2_kry1d"]
+[ext_resource type="Texture2D" uid="uid://qrmssgecs3h6" path="res://assets/sprites/personaje/ataque_02.png" id="3_icofr"]
+[ext_resource type="Texture2D" uid="uid://bsptayvyvp0w8" path="res://assets/sprites/personaje/ataque_03.png" id="4_3shoi"]
+[ext_resource type="Texture2D" uid="uid://bak5ltnhr75f3" path="res://assets/sprites/personaje/caminar_01.png" id="5_a482u"]
+[ext_resource type="Texture2D" uid="uid://dxackicnojyor" path="res://assets/sprites/personaje/caminar_02.png" id="6_t3lbc"]
+[ext_resource type="Texture2D" uid="uid://chm8ctwlpu0h1" path="res://assets/sprites/personaje/caminar_03.png" id="7_f5eku"]
+[ext_resource type="Texture2D" uid="uid://d1h1m8yyhfkr1" path="res://assets/sprites/personaje/caminar_04.png" id="8_ggaj1"]
+[ext_resource type="Texture2D" uid="uid://cn7vffeay1n4s" path="res://assets/sprites/personaje/caminar_05.png" id="9_2c0qe"]
+[ext_resource type="Texture2D" uid="uid://v0xjexw3skq5" path="res://assets/sprites/personaje/caminar_06.png" id="10_g0luq"]
+[ext_resource type="Texture2D" uid="uid://bsw8aa6igt8k3" path="res://assets/sprites/personaje/dano.png" id="11_omp5t"]
+[ext_resource type="Texture2D" uid="uid://ctcvo8p54asmq" path="res://assets/sprites/personaje/idle_derecha.png" id="12_jhueh"]
+[ext_resource type="Texture2D" uid="uid://d0sn33vtlc3cf" path="res://assets/sprites/personaje/idle_espalda.png" id="13_nhv4w"]
+[ext_resource type="Texture2D" uid="uid://n4txx7nwllsy" path="res://assets/sprites/personaje/idle_frente.png" id="14_lj14m"]
+[ext_resource type="Texture2D" uid="uid://1etlb4cg8cer" path="res://assets/sprites/personaje/idle_izquierda.png" id="15_a2wh3"]
+[ext_resource type="Texture2D" uid="uid://dfg6cnonvja1v" path="res://assets/sprites/personaje/muerte.png" id="16_2iq1j"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8cq3s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_kry1d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_icofr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_3shoi")
+}],
+"loop": 0,
+"name": &"ataque",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_a482u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_t3lbc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_f5eku")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_ggaj1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_2c0qe")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_g0luq")
+}],
+"loop": 1,
+"name": &"caminar",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_omp5t")
+}],
+"loop": 0,
+"name": &"dano",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("15_a2wh3")
+}],
+"loop": 1,
+"name": &"idle_derecha",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_nhv4w")
+}],
+"loop": 1,
+"name": &"idle_espalda",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_lj14m")
+}],
+"loop": 1,
+"name": &"idle_frente",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("12_jhueh")
+}],
+"loop": 1,
+"name": &"idle_izquierda",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_2iq1j")
+}],
+"loop": 0,
+"name": &"muerte",
+"speed": 5.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8cq3s"]
 size = Vector2(20, 24)
 
 [node name="Isaac" type="CharacterBody2D" unique_id=778066013 groups=["player"]]
+scale = Vector2(0.5, 0.5)
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("1_w3itj")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1893129281]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1192816574]
+position = Vector2(0, -1)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_8cq3s")
+animation = &"idle_derecha"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1189074039]
 shape = SubResource("RectangleShape2D_8cq3s")

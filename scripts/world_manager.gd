@@ -33,8 +33,11 @@ func generate_dungeon() -> void:
 	for fragment in SECTOR_SCENES.keys():
 		if fragment != GameData.selected_fragment:
 			active_fragments.append(fragment)
+	active_fragments.shuffle()
+	GameData.sector_positions.clear()
+	GameData.starting_sector = ""
 	var spawn_pos := Vector2.ZERO
-	print("--- GENERANDO MAZMORRA: 6 SALAS POR SECTOR ---")
+	print("--- GENERANDO MAZMORRA: SECTORES EN ORDEN ALEATORIO ---")
 	print("Fragmento elegido: ", GameData.selected_fragment)
 	for i in range(active_fragments.size()):
 		var fragment: String = active_fragments[i]
@@ -48,6 +51,17 @@ func generate_dungeon() -> void:
 		sector_node.set("sector_type", fragment)
 		sector_node.set("is_first_sector", i == 0)
 		sector_node.set("is_last_sector", i == active_fragments.size() - 1)
+		sector_node.add_to_group("active_sectors")
 		add_child(sector_node)
+		var first_room := sector_node.get_node_or_null("Sala_1") as Node2D
+		GameData.sector_positions[fragment] = first_room.global_position if first_room != null else sector_node.global_position
+		if i == 0:
+			GameData.starting_sector = fragment
 		spawn_pos.x += ROOM_WIDTH * ROOMS_PER_SECTOR
 		print("Sector cargado: ", fragment, " (6 salas)")
+	# Isaac aparece en la sala 1 del primer sector de la lista aleatoria.
+	var player := get_parent().get_node_or_null("Isaac") as Node2D
+	if player != null and GameData.starting_sector != "":
+		var start_position: Vector2 = GameData.sector_positions[GameData.starting_sector]
+		player.global_position = start_position
+		print("Sector inicial aleatorio: ", GameData.starting_sector)

@@ -12,8 +12,19 @@ var attack_cooldown: float = 0.0
 var base_attack_cooldown: float = 0.35
 var sfx_player: AudioStreamPlayer2D
 
+# Ahora el personaje usa AnimatedSprite2D (antes era Sprite2D).
+# Animaciones esperadas en su SpriteFrames:
+#   idle_frente, idle_espalda, idle_izquierda, idle_derecha,
+#   caminar, ataque (sin loop), dano (sin loop), muerte (sin loop)
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+
 # Dirección hacia la que mira Isaac.
 var facing: Vector2 = Vector2.DOWN
+
+# Estados de animación.
+var is_attacking := false
+var is_hurt := false
+var is_dead := false
 
 # --- VARIABLES DE HABILIDADES PASIVAS ---
 var pride_bonus_damage := 0.0
@@ -27,10 +38,14 @@ func _ready() -> void:
 	apply_soul_fragment()
 	health = max_health
 	health_changed.emit(health, max_health)
-	
+
 	# Inicializamos el reproductor de audio
 	sfx_player = AudioStreamPlayer2D.new()
 	add_child(sfx_player)
+
+	# Para saber cuándo terminan las animaciones de ataque y daño
+	sprite.animation_finished.connect(_on_animation_finished)
+	_play(_idle_name())
 
 	var bar := get_tree().get_first_node_in_group("player_health_bar")
 	if bar is ProgressBar:
@@ -45,7 +60,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	# Cooldown de ataque
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
-	
+
 	# Lógica de las habilidades pasivas con el tiempo
 	_process_soul_passives(delta)
 
@@ -58,7 +73,46 @@ func _physics_process(delta: float) -> void:
 	velocity = direction * speed
 	move_and_slide()
 
+	_update_animation(direction)
 	queue_redraw()
+
+# ---------------------------------------------------------------
+# ANIMACIONES
+# ---------------------------------------------------------------
+
+func _update_animation(direction: Vector2) -> void:
+	if is_dead or is_attacking or is_hurt:
+		return
+	if direction != Vector2.ZERO:
+		# Los frames de caminar miran a la derecha; se voltean hacia la izquierda.
+		# Si se ve al revés, cambia a: facing.x > 0.0
+		sprite.flip_h = facing.x < 0.0
+		_play("caminar")
+	else:
+		sprite.flip_h = false
+		_play(_idle_name())
+
+func _idle_name() -> String:
+	if absf(facing.x) > absf(facing.y):
+		return "idle_derecha" if facing.x > 0.0 else "idle_izquierda"
+	return "idle_espalda" if facing.y < 0.0 else "idle_frente"
+
+func _play(anim: String) -> void:
+	# Las poses idle de la hoja vienen al doble de tamaño que los frames de animación
+	sprite.scale = Vector2.ONE * (0.5 if anim.begins_with("idle") else 1.0)
+	if sprite.animation != anim or not sprite.is_playing():
+		sprite.play(anim)
+
+func _on_animation_finished() -> void:
+	match sprite.animation:
+		"ataque":
+			is_attacking = false
+		"dano":
+			is_hurt = false
+
+# ---------------------------------------------------------------
+# HABILIDADES PASIVAS
+# ---------------------------------------------------------------
 
 func _process_soul_passives(delta: float) -> void:
 	match GameData.selected_fragment:
@@ -118,36 +172,30 @@ func _flash_shield() -> void:
 	tween.tween_property(self, "modulate", Color.WHITE, 0.25)
 
 func _draw() -> void:
-	# Sombra
-	draw_circle(Vector2(0, 10), 10, Color(0.05, 0.05, 0.05, 0.45))
+	# Isaac usa un AnimatedSprite2D con sprites PNG de pixel art.
+	pass
 
-	# Cuerpo: túnica azul
-	draw_rect(Rect2(-9, -8, 18, 19), Color("#3267b2"))
-
-	# Cabeza
-	draw_circle(Vector2(0, -12), 7, Color("#edbd91"))
-
-	# Cabello
-	draw_rect(Rect2(-7, -19, 14, 5), Color("#493126"))
-
-	# Espada provisional
-	var sword_start := facing * 9.0
-	var sword_end := facing * 22.0
-	draw_line(sword_start, sword_end, Color("#e5e8ee"), 4.0)
-
-	# Empuñadura
-	draw_line(sword_start - Vector2(3, 3), sword_start + Vector2(3, 3), Color("#8b552d"), 3.0)
+# ---------------------------------------------------------------
+# COMBATE
+# ---------------------------------------------------------------
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("attack"):
 		attack()
 
 func attack() -> void:
-	if attack_cooldown > 0.0:
+	if attack_cooldown > 0.0 or is_dead:
 		return
 
 	play_attack_sfx()
 	attack_cooldown = base_attack_cooldown
+
+	# Animación de ataque
+	is_attacking = true
+	is_hurt = false
+	sprite.scale = Vector2.ONE
+	sprite.flip_h = facing.x < 0.0
+	sprite.play("ataque")
 
 	var total_damage := int(attack_damage + pride_bonus_damage)
 
@@ -168,26 +216,35 @@ func attack() -> void:
 				node.take_damage(total_damage, global_position)
 
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
+	if is_dead:
+		return
+
 	play_hurt_sfx()
 	health -= amount
 	health = clampi(health, 0, max_health)
 	health_changed.emit(health, max_health)
-	
+
 	# Si te golpean, se reinicia el bono acumulado de Orgullo
 	if GameData.selected_fragment == "Orgullo":
 		pride_bonus_damage = 0.0
 		pride_timer = 0.0
-	
+
 	# Knockback
 	if attacker_position != Vector2.ZERO:
 		var knockback_dir := (global_position - attacker_position).normalized()
 		velocity = knockback_dir * 250.0
 		move_and_slide()
-	
+
 	_flash_red()
-	
+
 	if health <= 0:
 		die()
+	else:
+		# Animación de daño
+		is_attacking = false
+		is_hurt = true
+		sprite.scale = Vector2.ONE
+		sprite.play("dano")
 
 func _flash_red() -> void:
 	modulate = Color(1, 0.3, 0.3)
@@ -223,10 +280,25 @@ func apply_soul_fragment() -> void:
 			speed = 190.0
 
 func die() -> void:
+	is_dead = true
+	is_attacking = false
+	is_hurt = false
 	health = 0
 	health_changed.emit(health, max_health)
 	set_physics_process(false)
-	hide()
+	set_process_input(false)
+
+	# Animación de muerte (antes se llamaba hide() directamente)
+	sprite.scale = Vector2.ONE
+	sprite.flip_h = facing.x < 0.0
+	sprite.play("muerte")
+	# Si necesitas que desaparezca después de la animación, descomenta:
+	# await get_tree().create_timer(1.0).timeout
+	# hide()
+
+# ---------------------------------------------------------------
+# SONIDOS
+# ---------------------------------------------------------------
 
 func play_attack_sfx() -> void:
 	if sfx_player == null:
@@ -234,20 +306,20 @@ func play_attack_sfx() -> void:
 	var sample_rate := 44100.0
 	var duration := 0.08
 	var num_samples := int(sample_rate * duration)
-	
+
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_8_BITS
 	stream.mix_rate = int(sample_rate)
-	
+
 	var data := PackedByteArray()
 	data.resize(num_samples)
-	
+
 	for i in range(num_samples):
 		var t := float(i) / sample_rate
-		var freq := 800.0 - (t * 6000.0) 
+		var freq := 800.0 - (t * 6000.0)
 		var sample := int(sin(t * freq) * 127.0 * (1.0 - (t / duration)))
 		data[i] = clampi(sample + 128, 0, 255)
-		
+
 	stream.data = data
 	sfx_player.stream = stream
 	sfx_player.play()
@@ -258,20 +330,20 @@ func play_hurt_sfx() -> void:
 	var sample_rate := 44100.0
 	var duration := 0.12
 	var num_samples := int(sample_rate * duration)
-	
+
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_8_BITS
 	stream.mix_rate = int(sample_rate)
-	
+
 	var data := PackedByteArray()
 	data.resize(num_samples)
-	
+
 	for i in range(num_samples):
 		var t := float(i) / sample_rate
 		var freq := 300.0 - (t * 2000.0)
 		var sample := int(sin(t * freq) * 127.0 * (1.0 - (t / duration)))
 		data[i] = clampi(sample + 128, 0, 255)
-		
+
 	stream.data = data
 	sfx_player.stream = stream
 	sfx_player.play()

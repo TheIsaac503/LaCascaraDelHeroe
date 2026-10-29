@@ -80,5 +80,5 @@ func _confirm_selection() -> void:
 
 	GameData.choose_fragment(selected)
 	get_tree().change_scene_to_file(
-        "res://scenes/main/Main.tscn"
+        "res://scenes/dungeon/Prison.tscn"
 	)

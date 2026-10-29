@@ -1,0 +1,23 @@
+SPRITES DE LA CASCARA DEL HEROE (hoja de los 7 sectores) - recortados para Godot
+
+CARPETAS
+  isaac/                 idle_frente/izquierda/espalda/derecha (retratos, mas grandes),
+                         atacar_01-06, dano_01-07, morir_01-05 (cuadros pequenos, alineados por los pies)
+  enemigos/<sector>/     secuencias de cada sector (ira, bondad, orgullo, honor, hermandad,
+                         creatividad, amor). Cada carpeta tiene el mismo tamano de lienzo en todos
+                         sus cuadros y los pies alineados abajo: no "saltan" al animar.
+  minijefes/             jefe_ira ... jefe_amor
+  baldosas_suelo/        suelo_<sector>_01 y _02 (tamano original, ~45 px)
+  baldosas_pared/        pared_<sector>_01 y _02
+  baldosas_*_32x32/      las mismas baldosas reescaladas a 32x32 (listas para un TileSet)
+  decoraciones/          deco_01 a deco_45 (banderas, antorchas, pilares, plantas, cofres, barriles...)
+  puertas/               puerta_<sector>
+  especiales/            portales (9), banderas (6), rocas, jarrones, cofres, barriles, piedras
+  referencia_salas/      las 7 salas de ejemplo completas, solo como guia visual
+
+NOTAS
+  - Todos los PNG tienen fondo transparente (las baldosas conservan su fondo).
+  - Pixel art: en Godot usa Default Texture Filter = Nearest y escala los sprites (x2 a x4).
+  - Los cuadros de ataque/dano/morir miden unos 15-35 px; los retratos idle ~30x40 px.
+  - La hoja no trae animacion de caminar: solo retratos y las filas atacar, dano y morir.
+  - La fila "Hurt / Daño" mezcla un efecto de tajo (dano_01) y cuadros de golpe; revisa el orden.

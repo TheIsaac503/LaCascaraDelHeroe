@@ -1,9 +1,29 @@
 [gd_scene format=3 uid="uid://dmak46y7l1xvg"]
 
 [ext_resource type="Script" uid="uid://b8fedw38n2yxg" path="res://scripts/enemy.gd" id="1_atgxx"]
+[ext_resource type="Texture2D" uid="uid://crpruro2lei4m" path="res://assets/sprites/sprites_sectores/minijefes/jefe_ira.png" id="2_ofn68"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2h3w7"]
-radius = 18.0
+radius = 30.0
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8cq3s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ofn68")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ofn68")
+}],
+"loop": 1,
+"name": &"mover",
+"speed": 5.0
+}]
 
 [node name="CharacterBody2D" type="CharacterBody2D" unique_id=1222894567]
 script = ExtResource("1_atgxx")
@@ -13,3 +33,7 @@ contact_damage = 20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=913429439]
 shape = SubResource("CircleShape2D_2h3w7")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1731141414]
+sprite_frames = SubResource("SpriteFrames_8cq3s")
+animation = &"idle"

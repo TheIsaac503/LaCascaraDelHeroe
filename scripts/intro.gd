@@ -75,4 +75,4 @@ func _on_next_pressed() -> void:
         dialogue_index += 1
         _show_dialogue()
     else:
-        get_tree().change_scene_to_file("res://scenes/dungeon/Prison.tscn")
+        get_tree().change_scene_to_file("res://scenes/ui/SoulSelection.tscn")

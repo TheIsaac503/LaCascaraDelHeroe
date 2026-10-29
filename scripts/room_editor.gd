@@ -14,31 +14,49 @@ const W := 560.0
 const H := 360.0
 const WALL := 24.0
 const GAP := 104.0
+const FLOOR_TEXTURE: Texture2D = preload("res://assets/tiles/tiles_suelo/suelo_01.png")
 
 func _draw() -> void:
 	var rect := Rect2(-W / 2.0, -H / 2.0, W, H)
 	draw_rect(rect, sector_color)
-	# Suelo estilo mazmorra cenital: losas y bordes de piedra.
-	for i in range(1, 7):
-		var x := -W / 2.0 + float(i) * W / 7.0
-		draw_line(Vector2(x, -H / 2.0 + WALL), Vector2(x, H / 2.0 - WALL), Color(0.05, 0.05, 0.07, 0.23), 2.0)
-	for i in range(1, 4):
-		var y := -H / 2.0 + float(i) * H / 4.0
-		draw_line(Vector2(-W / 2.0 + WALL, y), Vector2(W / 2.0 - WALL, y), Color(0.05, 0.05, 0.07, 0.23), 2.0)
-	var stone := Color("#20232d")
+	# Baldosas pixel art: textura repetida con una capa de tinte propia del sector.
+	var tile_size := 32.0
+	var start_x := -W / 2.0
+	var start_y := -H / 2.0
+	var row := 0
+	while start_y < H / 2.0:
+		var col := 0
+		start_x = -W / 2.0
+		while start_x < W / 2.0:
+			var tile_rect := Rect2(start_x, start_y, tile_size, tile_size)
+			draw_texture_rect(FLOOR_TEXTURE, tile_rect, false, Color(1, 1, 1, 0.72))
+			# Sutiles variaciones de piedra para que no parezca un patrón plano.
+			if (col + row) % 4 == 0:
+				draw_rect(Rect2(start_x + 5, start_y + 6, 3, 2), accent_color.darkened(0.45), false, 1.0)
+			start_x += tile_size
+			col += 1
+		start_y += tile_size
+		row += 1
+	var stone := Color("#292631")
 # Puertas laterales
 	_draw_side(-W / 2.0, show_left_door, stone)
 	_draw_side(W / 2.0, show_right_door, stone)
 
 # Puertas superior e inferior
 	_draw_horizontal_door(-H / 2.0, bool(show_top_door), stone)
-	_draw_horizontal_door(H / 2.0 - WALL, bool(show_bottom_door), stone)
+	_draw_horizontal_door(H / 2.0, bool(show_bottom_door), stone)
+	# Juntas de los bloques del muro: relieve discreto, sin cubrir las puertas.
+	for wall_y in [-H / 2.0 + 5.0, H / 2.0 - 5.0]:
+		for block_x in range(0, 8):
+			var bx := -W / 2.0 + float(block_x) * 72.0 + (12.0 if wall_y < 0.0 else 0.0)
+			draw_line(Vector2(bx, wall_y - 4.0), Vector2(bx, wall_y + 4.0), Color(0.08, 0.07, 0.10, 0.55), 2.0)
 	
 	# Antorchas en las esquinas.
-	draw_circle(Vector2(-W / 2.0 + 38, -H / 2.0 + 38), 9, accent_color)
-	draw_circle(Vector2(W / 2.0 - 38, -H / 2.0 + 38), 9, accent_color)
-	draw_circle(Vector2(-W / 2.0 + 38, H / 2.0 - 38), 7, accent_color.darkened(0.2))
-	draw_circle(Vector2(W / 2.0 - 38, H / 2.0 - 38), 7, accent_color.darkened(0.2))
+	for torch_pos in [Vector2(-W / 2.0 + 38, -H / 2.0 + 38), Vector2(W / 2.0 - 38, -H / 2.0 + 38), Vector2(-W / 2.0 + 38, H / 2.0 - 38), Vector2(W / 2.0 - 38, H / 2.0 - 38)]:
+		draw_circle(torch_pos, 15, Color(accent_color.r, accent_color.g, accent_color.b, 0.12))
+		draw_rect(Rect2(torch_pos + Vector2(-3, 5), Vector2(6, 12)), Color("#60412f"))
+		draw_circle(torch_pos, 8, accent_color)
+		draw_circle(torch_pos + Vector2(-1, -2), 4, Color("#ffe5a0"))
 	var font := ThemeDB.fallback_font
 	if font:
 		draw_string(font, Vector2(-110, -H / 2.0 + 52), "SALA " + str(room_number), HORIZONTAL_ALIGNMENT_CENTER, 220, 17, accent_color)
