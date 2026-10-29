@@ -32,6 +32,10 @@ var pride_timer := 0.0
 var love_timer := 0.0
 var brotherhood_shield_ready := true
 var honor_counter_damage := 0.0
+# --- CURACIÓN FUERA DE COMBATE ---
+var healing_wait_timer: float = 0.0
+var healing_interval_timer: float = 0.0
+var healing_started: bool = false
 
 func _ready() -> void:
 	add_to_group("player")
@@ -63,6 +67,9 @@ func _physics_process(delta: float) -> void:
 
 	# Lógica de las habilidades pasivas con el tiempo
 	_process_soul_passives(delta)
+	
+	# Curación automática fuera de combate
+	_process_out_of_combat_healing(delta)
 
 	# Movimiento del personaje
 	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -122,7 +129,7 @@ func _process_soul_passives(delta: float) -> void:
 			if love_timer >= 3.0:
 				love_timer = 0.0
 				if health < max_health:
-					health = mini(health + 2, max_health)
+					health = mini(health + 5, max_health)
 					health_changed.emit(health, max_health)
 
 		"Orgullo":
@@ -145,7 +152,7 @@ func _process_soul_passives(delta: float) -> void:
 			# 4. HERMANDAD: Tanque resistente que recupera su escudo si pasa 10s sin recibir daño
 			if not brotherhood_shield_ready:
 				love_timer += delta # Reutilizamos el temporizador para la recarga del escudo
-				if love_timer >= 10.0:
+				if love_timer >= 5.0:
 					love_timer = 0.0
 					brotherhood_shield_ready = true
 					_flash_shield()
@@ -218,8 +225,19 @@ func attack() -> void:
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
 	if is_dead:
 		return
-
+		
+	# Escudo de Hermandad: bloquea un golpe
+	if GameData.selected_fragment == "Hermandad" and brotherhood_shield_ready:
+		brotherhood_shield_ready = false
+		_flash_shield()
+		return
+		
 	play_hurt_sfx()
+	# Reiniciar la curación al recibir daño
+	healing_wait_timer = 0.0
+	healing_interval_timer = 0.0
+	healing_started = false
+	
 	health -= amount
 	health = clampi(health, 0, max_health)
 	health_changed.emit(health, max_health)
@@ -347,3 +365,40 @@ func play_hurt_sfx() -> void:
 	stream.data = data
 	sfx_player.stream = stream
 	sfx_player.play()
+
+func _process_out_of_combat_healing(delta: float) -> void:
+	# No curar a Isaac si está muerto
+	if is_dead or health <= 0:
+		return
+
+	# El fragmento Amor conserva su propia curación
+	if GameData.selected_fragment == "Amor":
+		healing_wait_timer = 0.0
+		healing_interval_timer = 0.0
+		healing_started = false
+		return
+
+	# Si Isaac ya tiene toda la vida, no necesita curarse
+	if health >= max_health:
+		healing_wait_timer = 0.0
+		healing_interval_timer = 0.0
+		healing_started = false
+		return
+
+	# Esperar 5 segundos sin recibir daño
+	if not healing_started:
+		healing_wait_timer += delta
+
+		if healing_wait_timer >= 5.0:
+			healing_started = true
+			healing_interval_timer = 0.0
+
+		return
+
+	# Recuperar 4 puntos de vida cada 2 segundos
+	healing_interval_timer += delta
+
+	if healing_interval_timer >= 2.0:
+		healing_interval_timer = 0.0
+		health = mini(health + 4, max_health)
+		health_changed.emit(health, max_health)

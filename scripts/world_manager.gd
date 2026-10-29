@@ -1,6 +1,6 @@
 extends Node2D
 
-const ROOM_WIDTH := 560.0
+const ROOM_WIDTH := 750.0
 const ROOMS_PER_SECTOR := 6
 const SECTOR_SCENES := {
 	"Ira": "res://scenes/sectors/Ira_Sector.tscn",
@@ -52,6 +52,7 @@ func generate_dungeon() -> void:
 		sector_node.set("is_first_sector", i == 0)
 		sector_node.set("is_last_sector", i == active_fragments.size() - 1)
 		sector_node.add_to_group("active_sectors")
+		
 		add_child(sector_node)
 		var first_room := sector_node.get_node_or_null("Sala_1") as Node2D
 		GameData.sector_positions[fragment] = first_room.global_position if first_room != null else sector_node.global_position
