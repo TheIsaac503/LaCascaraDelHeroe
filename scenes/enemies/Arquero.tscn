@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://cs8nsm878l2w4"]
+
+[ext_resource type="Script" uid="uid://dl8rt143esnjv" path="res://scripts/arquero.gd" id="1_ehkdt"]
+[ext_resource type="Texture2D" uid="uid://b1i201h7ygm31" path="res://assets/sprites/personaje/enemigos/Normales/arquero/Arquero esqueleto(2).png" id="2_sqtow"]
+[ext_resource type="PackedScene" uid="uid://d31qhms3qmdlb" path="res://scenes/enemies/Habilidades/Flecha.tscn" id="3_tma6e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8cq3s"]
+size = Vector2(25, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m6by7"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(0, 398, 231, 199)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_admgg"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(231, 398, 231, 199)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x0jkx"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(462, 398, 231, 199)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_45mww"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(693, 398, 231, 199)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xj0l8"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(924, 398, 231, 199)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0evn"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(1140, 392, 380, 196)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t73el"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(0, 0, 230, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vitom"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(230, 0, 230, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bo06j"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(0, 204, 230, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8gb6q"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(460, 204, 230, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u0kih"]
+atlas = ExtResource("2_sqtow")
+region = Rect2(690, 204, 230, 204)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8cq3s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m6by7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_admgg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x0jkx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_45mww")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xj0l8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l0evn")
+}],
+"loop": 0,
+"name": &"ataque",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t73el")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vitom")
+}],
+"loop": 0,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bo06j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8gb6q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u0kih")
+}],
+"loop": 1,
+"name": &"mover",
+"speed": 5.0
+}]
+
+[node name="Enemy" type="CharacterBody2D" unique_id=1835640054]
+scale = Vector2(0.5, 0.5)
+script = ExtResource("1_ehkdt")
+arrow_scene = ExtResource("3_tma6e")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1972349056]
+scale = Vector2(1.5, 1.5)
+shape = SubResource("RectangleShape2D_8cq3s")
+one_way_collision = true
+one_way_collision_direction = Vector2(0, 0)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=246886246]
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_8cq3s")
+animation = &"idle"
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=59397359]
+area_mask = 3

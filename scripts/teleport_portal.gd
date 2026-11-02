@@ -25,6 +25,15 @@ func _on_body_entered(body: Node2D) -> void:
 		if fragment != source_sector and not GameData.cleared_sectors.has(fragment):
 			destinations.append(fragment)
 	if destinations.is_empty():
+		if GameData.are_all_sectors_cleared():
+			_used = true
+			GameData.save_final_entry_stats(body)
+			print("Todos los sectores superados. Entrando a la arena del jefe final.")
+			var error := get_tree().change_scene_to_file("res://scenes/entities/bosses/FinalBossArena.tscn")
+			if error != OK:
+				_used = false
+				push_error("No se pudo abrir la arena final. Código: " + str(error))
+			return
 		print("No hay sectores sin despejar disponibles para el portal.")
 		return
 	destinations.shuffle()

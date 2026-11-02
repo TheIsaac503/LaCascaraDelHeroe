@@ -14,7 +14,7 @@ const W := 560.0
 const H := 360.0
 const WALL := 24.0
 const GAP := 104.0
-const FLOOR_TEXTURE: Texture2D = preload("res://assets/tiles/tiles_suelo/suelo_01.png")
+const FLOOR_TEXTURE: Texture2D = preload("res://assets/sprites/sprites_sectores/baldosas_suelo/suelo_creatividad_01.png")
 
 func _draw() -> void:
 	var rect := Rect2(-W / 2.0, -H / 2.0, W, H)

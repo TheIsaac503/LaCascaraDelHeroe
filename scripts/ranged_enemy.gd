@@ -7,6 +7,7 @@ var health := 40
 var speed := 70.0
 var attack_cooldown := 1.8
 var can_attack := true
+var is_attacking := false
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player")
 

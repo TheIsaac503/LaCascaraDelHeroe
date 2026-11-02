@@ -1,39 +1,25 @@
-[gd_scene format=3 uid="uid://dp3w3kvtekn4s"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://b8fedw38n2yxg" path="res://scripts/enemy.gd" id="1_ba2u8"]
-[ext_resource type="Texture2D" uid="uid://cyssdrmhdfp2f" path="res://assets/sprites/sprites_sectores/minijefes/jefe_hermandad.png" id="2_3bimg"]
+[ext_resource type="Script" path="res://scripts/bosses/anclis.gd" id="1_anclis"]
+[ext_resource type="Texture2D" path="res://assets/sprites/sprites_sectores/minijefes/jefe_hermandad.png" id="2_anclis"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_2h3w7"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_anclis"]
 radius = 30.0
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_8cq3s"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("2_3bimg")
-}],
-"loop": 1,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("2_3bimg")
-}],
-"loop": 1,
-"name": &"mover",
-"speed": 5.0
-}]
-
-[node name="CharacterBody2D" type="CharacterBody2D" unique_id=1222894567]
-script = ExtResource("1_ba2u8")
-speed = 75.0
+[node name="Anclis" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_anclis")
 max_health = 200
-contact_damage = 20
+hurt_knockback = 35.0
+boss_display_name = "Anclis"
+sector_type = "Hermandad"
+confined_to_room = true
+room_half_extents = Vector2(238, 138)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=913429439]
-shape = SubResource("CircleShape2D_2h3w7")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_anclis")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2030192818]
-sprite_frames = SubResource("SpriteFrames_8cq3s")
-animation = &"mover"
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_anclis")
+texture_filter = 1

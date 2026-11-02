@@ -6,11 +6,14 @@ signal health_changed(current_health: int, maximum_health: int)
 @export var attack_damage: int = 20
 @export var attack_range: float = 48.0
 @export var speed: float = 180.0
+var final_resurrection_speed_multiplier: float = 1.0
+var final_resurrection_cooldown_multiplier: float = 1.0
 
 var health: int = 100
 var attack_cooldown: float = 0.0
 var base_attack_cooldown: float = 0.35
 var sfx_player: AudioStreamPlayer2D
+
 
 # Ahora el personaje usa AnimatedSprite2D (antes era Sprite2D).
 # Animaciones esperadas en su SpriteFrames:
@@ -26,12 +29,26 @@ var is_attacking := false
 var is_hurt := false
 var is_dead := false
 
+# --- DASH / ESQUIVA ---
+var is_dashing := false
+var dash_speed: float = 360.0
+var dash_duration: float = 0.25
+var dash_timer: float = 0.0
+var dash_cooldown: float = 0.8
+var dash_cooldown_timer: float = 0.0
+var dash_direction: Vector2 = Vector2.ZERO
+
 # --- VARIABLES DE HABILIDADES PASIVAS ---
 var pride_bonus_damage := 0.0
 var pride_timer := 0.0
 var love_timer := 0.0
 var brotherhood_shield_ready := true
-var honor_counter_damage := 0.0
+var brotherhood_shield_timer := 0.0
+var skill_cooldowns: Dictionary = {}
+var empowered_next_attack := false
+var honor_invulnerable_timer := 0.0
+var bondad_attack_bonus := 0.0
+var last_damage_time := 0.0
 # --- CURACIÓN FUERA DE COMBATE ---
 var healing_wait_timer: float = 0.0
 var healing_interval_timer: float = 0.0
@@ -62,11 +79,30 @@ func _ready() -> void:
 		bar.value = health
 
 func _physics_process(delta: float) -> void:
+	
+		# Control del tiempo de recarga del dash
+	dash_cooldown_timer = maxf(0.0, dash_cooldown_timer - delta)
+
+	# Movimiento especial durante el dash
+	if is_dashing:
+		dash_timer -= delta
+		velocity = dash_direction * dash_speed
+		move_and_slide()
+
+		if dash_timer <= 0.0:
+			is_dashing = false
+			velocity = Vector2.ZERO
+			_update_animation(Vector2.ZERO)
+
+		queue_redraw()
+		return
+	
 	# Cooldown de ataque
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 
 	# Lógica de las habilidades pasivas con el tiempo
 	_process_soul_passives(delta)
+	_process_ability_timers(delta)
 	
 	# Curación automática fuera de combate
 	_process_out_of_combat_healing(delta)
@@ -122,55 +158,137 @@ func _on_animation_finished() -> void:
 # ---------------------------------------------------------------
 
 func _process_soul_passives(delta: float) -> void:
-	match GameData.selected_fragment:
-		"Amor":
-			# 1. AMOR: Regenera 2 de vida cada 3 segundos
-			love_timer += delta
-			if love_timer >= 3.0:
-				love_timer = 0.0
-				if health < max_health:
-					health = mini(health + 5, max_health)
-					health_changed.emit(health, max_health)
+	# Los beneficios se acumulan según los fragmentos que Isaac haya recuperado.
+	if GameData.has_fragment("Amor"):
+		love_timer += delta
+		if love_timer >= 3.0:
+			love_timer = 0.0
+			if health < max_health:
+				health = mini(health + 10, max_health)
+				health_changed.emit(health, max_health)
 
-		"Orgullo":
-			# 2. ORGULLO: Sube +2 de daño cada 4 segundos sin recibir daño
-			pride_timer += delta
-			if pride_timer >= 4.0:
-				pride_timer = 0.0
-				pride_bonus_damage = mini(pride_bonus_damage + 2.0, 20.0)
+	if GameData.has_fragment("Orgullo"):
+		pride_timer += delta
+		if pride_timer >= 6.0 and Time.get_ticks_msec() / 1000.0 - last_damage_time >= 6.0:
+			pride_timer = 0.0
+			pride_bonus_damage = minf(pride_bonus_damage + 0.4, 4.0)
 
+	if GameData.has_fragment("Hermandad") and not brotherhood_shield_ready:
+		brotherhood_shield_timer += delta
+		if brotherhood_shield_timer >= 10.0:
+			brotherhood_shield_timer = 0.0
+			brotherhood_shield_ready = true
+			_flash_shield()
+
+func _process_ability_timers(delta: float) -> void:
+	for fragment in skill_cooldowns.keys():
+		skill_cooldowns[fragment] = maxf(0.0, float(skill_cooldowns[fragment]) - delta)
+	if honor_invulnerable_timer > 0.0:
+		honor_invulnerable_timer = maxf(0.0, honor_invulnerable_timer - delta)
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("Esquivar"):
+		if not event.is_echo():
+			start_dash()
+
+	if event.is_action_pressed("attack"):
+		attack()
+
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_Q:
+			use_equipped_ability(0)
+		elif event.keycode == KEY_R:
+			use_equipped_ability(1)
+			
+func start_dash() -> void:
+	if is_dead or is_dashing or is_attacking or is_hurt:
+		return
+
+	if dash_cooldown_timer > 0.0:
+		return
+
+	# Usar la dirección actual de movimiento
+	var direction := Input.get_vector(
+		"move_left",
+		"move_right",
+		"move_up",
+		"move_down"
+	)
+
+	# Si Isaac está quieto, usar la última dirección
+	if direction == Vector2.ZERO:
+		direction = facing.normalized()
+
+	dash_direction = direction.normalized()
+
+	is_dashing = true
+	dash_timer = dash_duration
+	dash_cooldown_timer = dash_cooldown
+
+	# Cancelar cualquier movimiento de ataque anterior
+	velocity = Vector2.ZERO
+
+	# Orientar el sprite
+	sprite.flip_h = dash_direction.x < 0.0
+	_play("caminar")
+
+func use_equipped_ability(slot: int) -> void:
+	if slot < 0 or slot >= GameData.equipped_abilities.size():
+		return
+	var fragment := str(GameData.equipped_abilities[slot])
+	if fragment.is_empty() or not GameData.has_fragment(fragment) or is_dead:
+		return
+	if float(skill_cooldowns.get(fragment, 0.0)) > 0.0:
+		return
+	var cooldown := 12.0
+	match fragment:
 		"Ira":
-			# 3. IRA: Si la vida cae a menos del 50%, entra en estado de frenesí
-			if health < (max_health / 2):
-				base_attack_cooldown = 0.15
-				speed = 210.0
-			else:
-				base_attack_cooldown = 0.22
-				speed = 180.0
-
-		"Hermandad":
-			# 4. HERMANDAD: Tanque resistente que recupera su escudo si pasa 10s sin recibir daño
-			if not brotherhood_shield_ready:
-				love_timer += delta # Reutilizamos el temporizador para la recarga del escudo
-				if love_timer >= 5.0:
-					love_timer = 0.0
-					brotherhood_shield_ready = true
-					_flash_shield()
-
-		"Honor":
-			# 5. HONOR: Incrementa la velocidad de movimiento mientras mantengas la vida completa
-			if health == max_health:
-				speed = 205.0
-			else:
-				speed = 180.0
-
-		"Creatividad":
-			# 6. CREATIVIDAD: Su daño cambia aleatoriamente en cada ataque (se procesa al atacar)
-			pass
-
+			_damage_nearby_enemies(125.0, int(attack_damage * 2.0))
+			cooldown = 14.0
 		"Bondad":
-			# 7. BONDAD: Recupera vida al derrotar enemigos mediante los orbes (se procesa en enemy.gd)
-			pass
+			health = mini(max_health, health + int(round(max_health * 0.25)))
+			health_changed.emit(health, max_health)
+			cooldown = 20.0
+		"Orgullo":
+			empowered_next_attack = true
+			cooldown = 16.0
+			_show_ability_message("SIGUIENTE GOLPE POTENCIADO")
+		"Honor":
+			honor_invulnerable_timer = 3.0
+			modulate = Color(1.0, 0.85, 0.45)
+			var honor_tween := create_tween()
+			honor_tween.tween_property(self, "modulate", Color.WHITE, 3.0)
+			cooldown = 18.0
+		"Hermandad":
+			brotherhood_shield_ready = true
+			brotherhood_shield_timer = 0.0
+			_flash_shield()
+			cooldown = 22.0
+		"Creatividad":
+			_damage_nearby_enemies(210.0, int(attack_damage * 1.5))
+			cooldown = 17.0
+		"Amor":
+			health = max_health
+			health_changed.emit(health, max_health)
+			cooldown = 30.0
+	skill_cooldowns[fragment] = cooldown
+
+func _damage_nearby_enemies(radius: float, damage: int) -> void:
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if is_instance_valid(enemy) and enemy is Node2D and global_position.distance_to(enemy.global_position) <= radius:
+			if enemy.has_method("take_damage"):
+				enemy.take_damage(damage, global_position)
+
+func _show_ability_message(message: String) -> void:
+	var label := Label.new()
+	label.text = message
+	label.add_theme_color_override("font_color", Color("#ffe29a"))
+	label.add_theme_font_size_override("font_size", 16)
+	label.position = Vector2(-100, -75)
+	add_child(label)
+	var tween := create_tween()
+	tween.tween_property(label, "position:y", -110.0, 1.0)
+	tween.tween_callback(label.queue_free)
 
 func _flash_shield() -> void:
 	# Parpadeo azul brillante al activarse o recargarse el escudo de Hermandad
@@ -186,12 +304,8 @@ func _draw() -> void:
 # COMBATE
 # ---------------------------------------------------------------
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("attack"):
-		attack()
-
 func attack() -> void:
-	if attack_cooldown > 0.0 or is_dead:
+	if attack_cooldown > 0.0 or is_dead or is_dashing:
 		return
 
 	play_attack_sfx()
@@ -204,7 +318,19 @@ func attack() -> void:
 	sprite.flip_h = facing.x < 0.0
 	sprite.play("ataque")
 
-	var total_damage := int(attack_damage + pride_bonus_damage)
+	var damage_multiplier := 1.0
+	if GameData.has_fragment("Ira"):
+		damage_multiplier += 0.15
+		if health <= max_health * 0.5:
+			damage_multiplier += 0.10
+	if GameData.has_fragment("Orgullo"):
+		damage_multiplier += 0.10
+	if GameData.has_fragment("Creatividad"):
+		damage_multiplier += 0.10
+	var total_damage := int((attack_damage + pride_bonus_damage) * damage_multiplier)
+	if empowered_next_attack:
+		total_damage *= 2
+		empowered_next_attack = false
 
 	for node in get_tree().get_nodes_in_group("enemies"):
 		if not is_instance_valid(node):
@@ -225,12 +351,21 @@ func attack() -> void:
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
 	if is_dead:
 		return
+	
+	if is_dashing:
+		return
 		
-	# Escudo de Hermandad: bloquea un golpe
-	if GameData.selected_fragment == "Hermandad" and brotherhood_shield_ready:
+	if honor_invulnerable_timer > 0.0:
+		return
+	# Hermandad absorbe un golpe y se recarga tras 10 segundos.
+	if GameData.has_fragment("Hermandad") and brotherhood_shield_ready:
 		brotherhood_shield_ready = false
+		brotherhood_shield_timer = 0.0
 		_flash_shield()
 		return
+	if GameData.has_fragment("Honor"):
+		amount = maxi(1, int(round(amount * 0.85)))
+	last_damage_time = Time.get_ticks_msec() / 1000.0
 		
 	play_hurt_sfx()
 	# Reiniciar la curación al recibir daño
@@ -243,7 +378,7 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void
 	health_changed.emit(health, max_health)
 
 	# Si te golpean, se reinicia el bono acumulado de Orgullo
-	if GameData.selected_fragment == "Orgullo":
+	if GameData.has_fragment("Orgullo"):
 		pride_bonus_damage = 0.0
 		pride_timer = 0.0
 
@@ -279,25 +414,54 @@ func apply_soul_fragment() -> void:
 	speed = 180.0
 	pride_bonus_damage = 0.0
 
-	match GameData.selected_fragment:
-		"Ira":
-			base_attack_cooldown = 0.20
-		"Bondad":
-			max_health = 120
-		"Orgullo":
-			attack_damage = 22
-		"Honor":
-			max_health = 120
-			attack_damage = 24
-		"Hermandad":
-			max_health = 130
-		"Creatividad":
-			attack_damage = 30
+	# La elección inicial ya está registrada como fragmento poseído.
+	if GameData.has_fragment("Bondad"):
+		max_health += 10
+	if GameData.has_fragment("Hermandad"):
+		max_health += 10
+	if GameData.has_fragment("Honor"):
+		attack_damage += 2
+	if GameData.has_fragment("Creatividad"):
+		attack_damage += 2
+	if GameData.has_fragment("Amor"):
+		speed += 5.0
+
+func apply_new_fragment(fragment_name: String) -> void:
+	# Los aumentos de atributos se aplican una sola vez al recuperar cada alma.
+	match fragment_name:
+		"Bondad", "Hermandad":
+			max_health += 10
+			health += 10
+			health_changed.emit(health, max_health)
+		"Honor", "Creatividad":
+			attack_damage += 2
 		"Amor":
-			max_health = 100
-			speed = 190.0
+			speed += 5.0
 
 func die() -> void:
+	# La protección secreta de Amy solo funciona en el combate final y una vez.
+	if GameData.final_battle_active and GameData.amy_spared and not GameData.amy_extra_life_used:
+		GameData.amy_extra_life_used = true
+		is_dead = false
+		is_attacking = false
+		is_hurt = true
+		health = maxi(1, int(round(max_health * 0.5)))
+		attack_damage = maxi(1, int(round(attack_damage * 1.5)))
+		final_resurrection_speed_multiplier = 1.5
+		final_resurrection_cooldown_multiplier = 1.0 / 1.5
+		speed *= 1.5
+		base_attack_cooldown /= 1.5
+		attack_cooldown = 0.0
+		set_physics_process(true)
+		set_process_input(true)
+		sprite.scale = Vector2.ONE
+		sprite.play("dano")
+		health_changed.emit(health, max_health)
+		var revive_tween := create_tween()
+		modulate = Color(1.0, 0.55, 1.0)
+		revive_tween.tween_property(self, "modulate", Color.WHITE, 1.0)
+		return
+
 	is_dead = true
 	is_attacking = false
 	is_hurt = false
@@ -372,7 +536,7 @@ func _process_out_of_combat_healing(delta: float) -> void:
 		return
 
 	# El fragmento Amor conserva su propia curación
-	if GameData.selected_fragment == "Amor":
+	if GameData.has_fragment("Amor"):
 		healing_wait_timer = 0.0
 		healing_interval_timer = 0.0
 		healing_started = false

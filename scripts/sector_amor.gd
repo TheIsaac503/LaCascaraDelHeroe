@@ -9,7 +9,7 @@ const ROOM_WIDTH := 560.0
 const ROOM_HEIGHT := 360.0
 const WALL_THICKNESS := 24.0
 const DOOR_GAP := 104.0
-const ENEMY_SCENE := preload("res://scenes/enemies/Enemy_amor.tscn")
+const ENEMY_SCENE: PackedScene = preload("res://scenes/enemies/Enemy.tscn")
 const NPC_SCRIPT := preload("res://scripts/rescue_npc.gd")
 const PORTAL_SCRIPT := preload("res://scripts/teleport_portal.gd")
 
@@ -111,7 +111,7 @@ func _spawn_room_contents() -> void:
 		if room == null:
 			continue
 		for local_offset in enemy_positions[room_number]:
-			var enemy := ENEMY_SCENE.instantiate()
+			var enemy: Node2D = ENEMY_SCENE.instantiate() as Node2D
 			enemy.position = local_offset
 			enemy.set("confined_to_room", true)
 			var enemy_extents := Vector2(ROOM_WIDTH / 2.0 - 42.0, ROOM_HEIGHT / 2.0 - 42.0)

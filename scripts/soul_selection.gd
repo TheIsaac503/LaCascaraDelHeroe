@@ -4,12 +4,12 @@ extends Control
 var selected: String = ""
 
 var descriptions := {
-	"Ira": "Reduce el tiempo de carga de tus habilidades de ataque.",
-	"Bondad": "Obtienes un 0.25% de vida maxima adicional por cada NPC que logres rescatar.",
-	"Orgullo": "Tras 6s sin recibir dano, entras en 'Orgullo de Heroe': +2% de ataque y +1% de rapidez (acumulable x10).",
-	"Honor": "Desbloquea la Tabla de Honor. Al completarla obtienes la 'Bendicion de la Diosa' (+50% a todas tus estadisticas).",
-	"Hermandad": "Abre la posibilidad de no matar a los minijefes para obtener piezas del conjunto completo de la Hermandad.",
-	"Creatividad": "Habilita el sistema de alquimia y la creacion de nuevas armas.",
+	"Ira": "Fragmento inicial: +15% de daño y +10% adicional con media vida o menos.",
+	"Bondad": "Fragmento inicial: +10 de vida máxima. Sus pociones curan y aceleran tus ataques.",
+	"Orgullo": "Fragmento inicial: +10% de daño y acumula un pequeño bono si pasas tiempo sin recibir daño.",
+	"Honor": "Fragmento inicial: +2 de daño y reduce un 15% el daño recibido.",
+	"Hermandad": "Fragmento inicial: +10 de vida máxima y un escudo que bloquea un golpe cada 10 segundos.",
+	"Creatividad": "Fragmento inicial: +2 de daño y +10% de daño total.",
 	"Amor": "Aumenta tu autosanacion y regeneracion de vida en un 20%."
 }
 

@@ -26,16 +26,18 @@ var confined_center_global: Vector2 = Vector2.ZERO
 
 var health: int
 var player: CharacterBody2D
-var contact_cooldown: float = 0.0
+var contact_cooldown: float = 2.0
 var is_dead := false
 var base_scale := Vector2.ONE
 var anim_time := 0.0
 var squash_tween: Tween
+var is_attacking := false
 
 # Nodo opcional: si la escena no tiene AnimatedSprite2D, el script sigue
 # funcionando con el dibujo antiguo (_draw).
 # Animaciones esperadas en su SpriteFrames: "mover" (obligatoria) e "idle" (opcional)
 @onready var sprite: AnimatedSprite2D = get_node_or_null("AnimatedSprite2D")
+
 
 func _ready() -> void:
 	health = max_health
@@ -43,6 +45,7 @@ func _ready() -> void:
 	if sprite != null:
 		base_scale = Vector2.ONE * sprite_scale
 		sprite.scale = base_scale
+		sprite.animation_finished.connect(_on_animation_finished)
 		_update_animation()
 	queue_redraw()
 
@@ -72,16 +75,11 @@ func _physics_process(delta: float) -> void:
 			global_position.x = clampf(global_position.x, confined_center_global.x - room_half_extents.x, confined_center_global.x + room_half_extents.x)
 			global_position.y = clampf(global_position.y, confined_center_global.y - room_half_extents.y, confined_center_global.y + room_half_extents.y)
 
-		# Daña a Isaac al tocarlo, con un intervalo.
-		if global_position.distance_to(player.global_position) < contact_range:
-			if contact_cooldown <= 0.0:
-				if player.has_method("take_damage"):
-					print("¡El enemigo golpeó a Isaac!")
-					player.take_damage(contact_damage)
-					contact_cooldown = 1.0
-				else:
-					print("ERROR: Isaac no tiene la función take_damage()")
-
+		# Detectar si Isaac está al alcance del ataque
+	if global_position.distance_to(player.global_position) < contact_range:
+		if contact_cooldown <= 0.0:
+			_attack_player()
+				
 	_update_animation()
 	_animate_body(delta)
 
@@ -90,13 +88,16 @@ func _physics_process(delta: float) -> void:
 # ---------------------------------------------------------------
 
 func _update_animation() -> void:
+	if is_attacking:
+		return
+	
 	if sprite == null or sprite.sprite_frames == null or is_dead:
 		return
 
 	var anim := "mover"
 	if velocity.length() < 1.0 and sprite.sprite_frames.has_animation("idle"):
 		anim = "idle"
-
+	
 	if sprite.sprite_frames.has_animation(anim) and sprite.animation != anim:
 		sprite.play(anim)
 	elif not sprite.is_playing() and sprite.sprite_frames.has_animation(anim):
@@ -105,6 +106,10 @@ func _update_animation() -> void:
 	# Mira hacia donde se mueve
 	if absf(velocity.x) > 1.0:
 		sprite.flip_h = velocity.x < 0.0
+
+func _on_animation_finished() -> void:
+	if sprite != null and sprite.animation == "attack":
+		is_attacking = false
 
 func _animate_body(delta: float) -> void:
 	# Respiración y balanceo para sprites de un solo cuadro (por ejemplo, Srbos).
@@ -190,15 +195,7 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void
 func _draw() -> void:
 	if is_dead:
 		return
-
-	# Silueta antigua del minijefe: solo si no hay AnimatedSprite2D en la escena.
-	if boss_display_name != "" and sprite == null:
-		draw_circle(Vector2(0, 2), 25.0, Color("#49243f"))
-		draw_circle(Vector2(0, -1), 20.0, Color("#9d477d"))
-		draw_rect(Rect2(-17, -8, 7, 7), Color("#f8d8f0"))
-		draw_rect(Rect2(10, -8, 7, 7), Color("#f8d8f0"))
-		draw_line(Vector2(-7, 10), Vector2(7, 10), Color("#54213d"), 3.0)
-
+		
 	# Nombre del minijefe sobre su barra de vida
 	if boss_display_name != "":
 		var label_y := minf(-38.0, bar_offset_y - 10.0)
@@ -243,3 +240,21 @@ func _spawn_hit_sparks(hit_position: Vector2) -> void:
 	# partículas (no a este enemigo), así funciona aunque el enemigo muera
 	# en ese mismo golpe.
 	get_tree().create_timer(0.3).timeout.connect(particles.queue_free)
+
+func _attack_player() -> void:
+	if is_attacking or not is_instance_valid(player):
+		return
+
+	is_attacking = true
+	contact_cooldown = 1.0
+
+	if sprite != null and sprite.sprite_frames != null:
+		if sprite.sprite_frames.has_animation("attack"):
+			sprite.play("attack")
+		else:
+			is_attacking = false
+
+	# Aplicar daño a Isaac
+	if player.has_method("take_damage"):
+		print("¡El enemigo atacó a Isaac!")
+		player.take_damage(contact_damage)

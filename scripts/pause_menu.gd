@@ -13,6 +13,7 @@ var game_over_overlay: ColorRect
 var health_bar: ProgressBar
 var health_label: Label
 var soul_label: Label
+var ability_overlay: ColorRect
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -193,6 +194,10 @@ func _create_pause_menu() -> void:
 	pause_panel.add_child(continue_button)
 	continue_button.pressed.connect(resume_game)
 
+	var abilities_button := _create_button("EQUIPAR HABILIDADES")
+	pause_panel.add_child(abilities_button)
+	abilities_button.pressed.connect(_open_ability_menu)
+
 	var menu_button := _create_button("VOLVER AL MENÚ")
 	pause_panel.add_child(menu_button)
 	menu_button.pressed.connect(_return_to_menu)
@@ -200,6 +205,66 @@ func _create_pause_menu() -> void:
 	var exit_button := _create_button("SALIR DEL JUEGO")
 	pause_panel.add_child(exit_button)
 	exit_button.pressed.connect(_exit_game)
+
+
+func _open_ability_menu() -> void:
+	if is_instance_valid(ability_overlay):
+		ability_overlay.queue_free()
+	ability_overlay = ColorRect.new()
+	ability_overlay.color = Color(0.02, 0.02, 0.05, 0.96)
+	ability_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	ability_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(ability_overlay)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	ability_overlay.add_child(center)
+	var panel := VBoxContainer.new()
+	panel.custom_minimum_size = Vector2(440, 0)
+	panel.add_theme_constant_override("separation", 14)
+	center.add_child(panel)
+	var title := Label.new()
+	title.text = "FRAGMENTOS Y HABILIDADES"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 25)
+	panel.add_child(title)
+	var info := Label.new()
+	info.text = "Los beneficios pasivos de tus fragmentos siempre están activos. Equipa dos habilidades especiales.\nQ: habilidad 1    R: habilidad 2"
+	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(info)
+	var options := []
+	for fragment in ["Ira", "Bondad", "Orgullo", "Honor", "Hermandad", "Creatividad", "Amor"]:
+		if GameData.has_fragment(fragment):
+			options.append({"label": fragment, "value": fragment})
+	for slot in range(2):
+		var row := HBoxContainer.new()
+		panel.add_child(row)
+		var slot_label := Label.new()
+		slot_label.text = "Habilidad " + str(slot + 1)
+		slot_label.custom_minimum_size.x = 110
+		row.add_child(slot_label)
+		var selector := OptionButton.new()
+		selector.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		for option in options:
+			selector.add_item(option.label)
+			selector.set_item_metadata(selector.item_count - 1, option.value)
+		var equipped := str(GameData.equipped_abilities[slot]) if GameData.equipped_abilities.size() > slot else ""
+		var selected_index := 0
+		for idx in range(selector.item_count):
+			if str(selector.get_item_metadata(idx)) == equipped:
+				selected_index = idx
+		selector.select(selected_index)
+		selector.item_selected.connect(_on_ability_selected.bind(slot, selector))
+		row.add_child(selector)
+	var close := _create_button("GUARDAR Y VOLVER")
+	panel.add_child(close)
+	close.pressed.connect(func() -> void:
+		ability_overlay.queue_free()
+		ability_overlay = null
+	)
+
+func _on_ability_selected(index: int, slot: int, selector: OptionButton) -> void:
+	GameData.equip_ability(slot, str(selector.get_item_metadata(index)))
 
 func _create_game_over_menu() -> void:
 	game_over_overlay = ColorRect.new()

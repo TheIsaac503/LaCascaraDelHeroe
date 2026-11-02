@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://d31qhms3qmdlb"]
+
+[ext_resource type="Script" uid="uid://citekk6guobpt" path="res://scripts/flecha.gd" id="1_c1u2j"]
+[ext_resource type="Texture2D" uid="uid://dcvyvx71cho3j" path="res://assets/sprites/personaje/enemigos/Normales/arquero/Flecha.png" id="2_aemlh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8cq3s"]
+
+[node name="Flecha" type="Area2D" unique_id=64643318]
+script = ExtResource("1_c1u2j")
+speed = null
+damage = null
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=303099993]
+shape = SubResource("RectangleShape2D_8cq3s")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1429599061]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_aemlh")
