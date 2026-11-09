@@ -1,0 +1,104 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/vista_frente_01.png" id="Tex_1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/vista_espalda_01.png" id="Tex_2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/vista_izquierda_01.png" id="Tex_3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/vista_derecha_01.png" id="Tex_4"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_01.png" id="Tex_5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_02.png" id="Tex_6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_03.png" id="Tex_7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_04.png" id="Tex_8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_05.png" id="Tex_9"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_06.png" id="Tex_10"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_07.png" id="Tex_11"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila1_08.png" id="Tex_12"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila2_01.png" id="Tex_13"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila2_02.png" id="Tex_14"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila2_03.png" id="Tex_15"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila2_04.png" id="Tex_16"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila2_05.png" id="Tex_17"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila2_06.png" id="Tex_18"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila2_07.png" id="Tex_19"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila3_01.png" id="Tex_20"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila3_02.png" id="Tex_21"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila3_03.png" id="Tex_22"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila3_04.png" id="Tex_23"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila3_05.png" id="Tex_24"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila3_06.png" id="Tex_25"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/movimiento_fila3_07.png" id="Tex_26"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/dano_01.png" id="Tex_27"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/muerte_01.png" id="Tex_28"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_pacifista_01.png" id="Tex_29"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_pacifista_02.png" id="Tex_30"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_pacifista_03.png" id="Tex_31"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_pacifista_04.png" id="Tex_32"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_perdonar_01.png" id="Tex_33"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_perdonar_02.png" id="Tex_34"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_perdonar_03.png" id="Tex_35"]
+[ext_resource type="Texture2D" path="res://assets/sprites/minijefes_64/Amy/recortados/interaccion_perdonar_04.png" id="Tex_36"]
+
+[resource]
+animations = [
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_1") }],
+"loop": false,
+"name": &"idle_frente",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_2") }],
+"loop": false,
+"name": &"idle_espalda",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_3") }],
+"loop": false,
+"name": &"idle_izquierda",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_4") }],
+"loop": false,
+"name": &"idle_derecha",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_5") }, { "duration": 1.0, "texture": ExtResource("Tex_6") }, { "duration": 1.0, "texture": ExtResource("Tex_7") }, { "duration": 1.0, "texture": ExtResource("Tex_8") }, { "duration": 1.0, "texture": ExtResource("Tex_9") }, { "duration": 1.0, "texture": ExtResource("Tex_10") }, { "duration": 1.0, "texture": ExtResource("Tex_11") }, { "duration": 1.0, "texture": ExtResource("Tex_12") }, { "duration": 1.0, "texture": ExtResource("Tex_13") }, { "duration": 1.0, "texture": ExtResource("Tex_14") }, { "duration": 1.0, "texture": ExtResource("Tex_15") }, { "duration": 1.0, "texture": ExtResource("Tex_16") }, { "duration": 1.0, "texture": ExtResource("Tex_17") }, { "duration": 1.0, "texture": ExtResource("Tex_18") }, { "duration": 1.0, "texture": ExtResource("Tex_19") }, { "duration": 1.0, "texture": ExtResource("Tex_20") }, { "duration": 1.0, "texture": ExtResource("Tex_21") }, { "duration": 1.0, "texture": ExtResource("Tex_22") }, { "duration": 1.0, "texture": ExtResource("Tex_23") }, { "duration": 1.0, "texture": ExtResource("Tex_24") }, { "duration": 1.0, "texture": ExtResource("Tex_25") }, { "duration": 1.0, "texture": ExtResource("Tex_26") }],
+"loop": true,
+"name": &"caminar",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_27") }],
+"loop": false,
+"name": &"dano",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_28") }],
+"loop": false,
+"name": &"muerte",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_29") }, { "duration": 1.0, "texture": ExtResource("Tex_30") }, { "duration": 1.0, "texture": ExtResource("Tex_31") }, { "duration": 1.0, "texture": ExtResource("Tex_32") }],
+"loop": true,
+"name": &"pacifista",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_33") }, { "duration": 1.0, "texture": ExtResource("Tex_34") }, { "duration": 1.0, "texture": ExtResource("Tex_35") }, { "duration": 1.0, "texture": ExtResource("Tex_36") }],
+"loop": false,
+"name": &"perdonar",
+"speed": 8.0
+}
+]

@@ -1,19 +1,22 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://8odi1d3esymj"]
 
-[ext_resource type="Script" path="res://scripts/bosses/acalenia.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/sprites/sprites_sectores/minijefes/jefe_bondad.png" id="2"]
+[ext_resource type="Script" uid="uid://cwlm7j04n67i0" path="res://scripts/bosses/acalenia.gd" id="1"]
+[ext_resource type="SpriteFrames" uid="uid://h6nkibugxyc1" path="res://assets/sprites/minijefes_64/Acalenia.tres" id="2_frames"]
 
 [sub_resource type="CircleShape2D" id="Circle"]
 radius = 30.0
 
-[node name="Acalenia" type="CharacterBody2D"]
+[node name="Acalenia" type="CharacterBody2D" unique_id=897143916]
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("1")
 max_health = 200
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=498298617]
 shape = SubResource("Circle")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1268688383]
+texture_filter = 1
+sprite_frames = ExtResource("2_frames")
+animation = &"muerte"
+autoplay = "idle_frente"

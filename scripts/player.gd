@@ -14,7 +14,6 @@ var attack_cooldown: float = 0.0
 var base_attack_cooldown: float = 0.35
 var sfx_player: AudioStreamPlayer2D
 
-
 # Ahora el personaje usa AnimatedSprite2D (antes era Sprite2D).
 # Animaciones esperadas en su SpriteFrames:
 #   idle_frente, idle_espalda, idle_izquierda, idle_derecha,
@@ -30,13 +29,13 @@ var is_hurt := false
 var is_dead := false
 
 # --- DASH / ESQUIVA ---
-var is_dashing := false
-var dash_speed: float = 360.0
-var dash_duration: float = 0.25
+@export var dash_speed: float = 600.0
+@export var dash_duration: float = 0.25
+@export var dash_cooldown: float = 0.8
+var is_dashing: bool = false
 var dash_timer: float = 0.0
-var dash_cooldown: float = 0.8
 var dash_cooldown_timer: float = 0.0
-var dash_direction: Vector2 = Vector2.ZERO
+var dash_direction: Vector2 = Vector2.DOWN
 
 # --- VARIABLES DE HABILIDADES PASIVAS ---
 var pride_bonus_damage := 0.0
@@ -79,26 +78,20 @@ func _ready() -> void:
 		bar.value = health
 
 func _physics_process(delta: float) -> void:
-	
-		# Control del tiempo de recarga del dash
+	# Cooldowns
+	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 	dash_cooldown_timer = maxf(0.0, dash_cooldown_timer - delta)
 
-	# Movimiento especial durante el dash
 	if is_dashing:
 		dash_timer -= delta
 		velocity = dash_direction * dash_speed
 		move_and_slide()
-
 		if dash_timer <= 0.0:
 			is_dashing = false
 			velocity = Vector2.ZERO
-			_update_animation(Vector2.ZERO)
-
+		_update_animation(dash_direction)
 		queue_redraw()
 		return
-	
-	# Cooldown de ataque
-	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 
 	# Lógica de las habilidades pasivas con el tiempo
 	_process_soul_passives(delta)
@@ -187,49 +180,33 @@ func _process_ability_timers(delta: float) -> void:
 		honor_invulnerable_timer = maxf(0.0, honor_invulnerable_timer - delta)
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("Esquivar"):
-		if not event.is_echo():
-			start_dash()
-
+	if event.is_action_pressed("dash"):
+		start_dash()
+		return
 	if event.is_action_pressed("attack"):
 		attack()
-
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_Q:
 			use_equipped_ability(0)
 		elif event.keycode == KEY_R:
 			use_equipped_ability(1)
-			
+
 func start_dash() -> void:
 	if is_dead or is_dashing or is_attacking or is_hurt:
 		return
-
 	if dash_cooldown_timer > 0.0:
 		return
-
-	# Usar la dirección actual de movimiento
-	var direction := Input.get_vector(
-		"move_left",
-		"move_right",
-		"move_up",
-		"move_down"
-	)
-
-	# Si Isaac está quieto, usar la última dirección
+	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if direction == Vector2.ZERO:
-		direction = facing.normalized()
-
+		direction = facing
+	if direction == Vector2.ZERO:
+		direction = Vector2.DOWN
 	dash_direction = direction.normalized()
-
+	facing = dash_direction
 	is_dashing = true
 	dash_timer = dash_duration
 	dash_cooldown_timer = dash_cooldown
-
-	# Cancelar cualquier movimiento de ataque anterior
-	velocity = Vector2.ZERO
-
-	# Orientar el sprite
-	sprite.flip_h = dash_direction.x < 0.0
+	velocity = dash_direction * dash_speed
 	_play("caminar")
 
 func use_equipped_ability(slot: int) -> void:
@@ -349,10 +326,7 @@ func attack() -> void:
 				node.take_damage(total_damage, global_position)
 
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
-	if is_dead:
-		return
-	
-	if is_dashing:
+	if is_dead or is_dashing:
 		return
 		
 	if honor_invulnerable_timer > 0.0:
@@ -463,6 +437,7 @@ func die() -> void:
 		return
 
 	is_dead = true
+	is_dashing = false
 	is_attacking = false
 	is_hurt = false
 	health = 0

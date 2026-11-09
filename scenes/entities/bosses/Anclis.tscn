@@ -1,25 +1,23 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cieswbj0lijtb"]
 
-[ext_resource type="Script" path="res://scripts/bosses/anclis.gd" id="1_anclis"]
-[ext_resource type="Texture2D" path="res://assets/sprites/sprites_sectores/minijefes/jefe_hermandad.png" id="2_anclis"]
+[ext_resource type="Script" uid="uid://ds6edk70ig4bu" path="res://scripts/bosses/anclis.gd" id="1_anclis"]
+[ext_resource type="SpriteFrames" uid="uid://fsbh6gr3p4bq" path="res://assets/sprites/minijefes_64/Anclis.tres" id="2_frames"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_anclis"]
 radius = 30.0
 
-[node name="Anclis" type="CharacterBody2D" groups=["enemies"]]
+[node name="Anclis" type="CharacterBody2D" unique_id=497883033 groups=["enemies"]]
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("1_anclis")
 max_health = 200
 hurt_knockback = 35.0
-boss_display_name = "Anclis"
-sector_type = "Hermandad"
-confined_to_room = true
-room_half_extents = Vector2(238, 138)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1886550241]
 shape = SubResource("CircleShape2D_anclis")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_anclis")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1582663826]
 texture_filter = 1
+sprite_frames = ExtResource("2_frames")
+animation = &"ataque2"
+autoplay = "idle_frente"

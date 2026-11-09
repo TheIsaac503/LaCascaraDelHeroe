@@ -1,0 +1,99 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" uid="uid://c0qw36cj7fl8a" path="res://assets/sprites/minijefes_64/Daynan/recortados/vista_frente_01.png" id="Tex_1"]
+[ext_resource type="Texture2D" uid="uid://fi65kphye8um" path="res://assets/sprites/minijefes_64/Daynan/recortados/vista_espalda_01.png" id="Tex_2"]
+[ext_resource type="Texture2D" uid="uid://bfupq4d4sxwo6" path="res://assets/sprites/minijefes_64/Daynan/recortados/vista_izquierda_01.png" id="Tex_3"]
+[ext_resource type="Texture2D" uid="uid://bxi4id3uv3n5v" path="res://assets/sprites/minijefes_64/Daynan/recortados/vista_derecha_01.png" id="Tex_4"]
+[ext_resource type="Texture2D" uid="uid://c6nnfkkfmfjsv" path="res://assets/sprites/minijefes_64/Daynan/recortados/movimiento_perfiles_01.png" id="Tex_5"]
+[ext_resource type="Texture2D" uid="uid://b3y1yi5wl6scj" path="res://assets/sprites/minijefes_64/Daynan/recortados/movimiento_perfiles_02.png" id="Tex_6"]
+[ext_resource type="Texture2D" uid="uid://cniy464rynxko" path="res://assets/sprites/minijefes_64/Daynan/recortados/movimiento_perfiles_03.png" id="Tex_7"]
+[ext_resource type="Texture2D" uid="uid://ds1oj8gg7s70g" path="res://assets/sprites/minijefes_64/Daynan/recortados/movimiento_perfiles_04.png" id="Tex_8"]
+[ext_resource type="Texture2D" uid="uid://ko0xgll00o1k" path="res://assets/sprites/minijefes_64/Daynan/recortados/dano_01.png" id="Tex_9"]
+[ext_resource type="Texture2D" uid="uid://bgh08a3uliu8j" path="res://assets/sprites/minijefes_64/Daynan/recortados/muerte_01.png" id="Tex_10"]
+[ext_resource type="Texture2D" uid="uid://bckx8an23ajvl" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque1_embestida_ira_01.png" id="Tex_11"]
+[ext_resource type="Texture2D" uid="uid://d1iljeh47o8hm" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque1_embestida_ira_02.png" id="Tex_12"]
+[ext_resource type="Texture2D" uid="uid://bper11pcfpkwe" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque1_embestida_ira_03.png" id="Tex_13"]
+[ext_resource type="Texture2D" uid="uid://1pty0078fdfe" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque_a_01.png" id="Tex_14"]
+[ext_resource type="Texture2D" uid="uid://wvp018wh7cq7" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque_a_02.png" id="Tex_15"]
+[ext_resource type="Texture2D" uid="uid://uoy2qp5il2we" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque_a_03.png" id="Tex_16"]
+[ext_resource type="Texture2D" uid="uid://dpt6k15hltvxl" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque_a_04.png" id="Tex_17"]
+[ext_resource type="Texture2D" uid="uid://8vc7d0111njw" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque2_horizontal_01.png" id="Tex_18"]
+[ext_resource type="Texture2D" uid="uid://b41b2dk5cctnh" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque2_horizontal_02.png" id="Tex_19"]
+[ext_resource type="Texture2D" uid="uid://bopkb0m3oevqi" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque2_horizontal_03.png" id="Tex_20"]
+[ext_resource type="Texture2D" uid="uid://sq145mtbqm8u" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque3_giratorio_01.png" id="Tex_21"]
+[ext_resource type="Texture2D" uid="uid://cl425es38fpgt" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque3_giratorio_02.png" id="Tex_22"]
+[ext_resource type="Texture2D" uid="uid://crhw7x3fej6is" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque3_giratorio_03.png" id="Tex_23"]
+[ext_resource type="Texture2D" uid="uid://dn1xqwi6cn6rm" path="res://assets/sprites/minijefes_64/Srbos/recortados/ataque3_giratorio_04.png" id="Tex_24"]
+
+[resource]
+animations = [
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_1") }],
+"loop": false,
+"name": &"idle_frente",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_2") }],
+"loop": false,
+"name": &"idle_espalda",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_3") }],
+"loop": false,
+"name": &"idle_izquierda",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_4") }],
+"loop": false,
+"name": &"idle_derecha",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_5") }, { "duration": 1.0, "texture": ExtResource("Tex_6") }, { "duration": 1.0, "texture": ExtResource("Tex_7") }, { "duration": 1.0, "texture": ExtResource("Tex_8") }],
+"loop": true,
+"name": &"caminar",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_9") }],
+"loop": false,
+"name": &"dano",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_10") }],
+"loop": false,
+"name": &"muerte",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_11") }, { "duration": 1.0, "texture": ExtResource("Tex_12") }, { "duration": 1.0, "texture": ExtResource("Tex_13") }, { "duration": 1.0, "texture": ExtResource("Tex_14") }, { "duration": 1.0, "texture": ExtResource("Tex_15") }, { "duration": 1.0, "texture": ExtResource("Tex_16") }, { "duration": 1.0, "texture": ExtResource("Tex_17") }],
+"loop": false,
+"name": &"ataque1",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_18") }, { "duration": 1.0, "texture": ExtResource("Tex_19") }, { "duration": 1.0, "texture": ExtResource("Tex_20") }],
+"loop": false,
+"name": &"ataque2",
+"speed": 8.0
+}
+,
+{
+"frames": [{ "duration": 1.0, "texture": ExtResource("Tex_21") }, { "duration": 1.0, "texture": ExtResource("Tex_22") }, { "duration": 1.0, "texture": ExtResource("Tex_23") }, { "duration": 1.0, "texture": ExtResource("Tex_24") }],
+"loop": false,
+"name": &"ataque3",
+"speed": 8.0
+}
+]

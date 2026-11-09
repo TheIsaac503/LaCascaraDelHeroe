@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://dyn3vpsu1qime"]
+[gd_scene load_steps=6 format=3]
 
-[ext_resource type="Script" uid="uid://cbbiq1hqyyyfh" path="res://scripts/final_boss_arena.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://h4jmw108rm8t" path="res://scenes/player/Isaac.tscn" id="2"]
+[ext_resource type="Script" path="res://scripts/final_boss_arena.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Isaac.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/entities/bosses/FinalBoss.tscn" id="3"]
 
 [sub_resource type="RectangleShape2D" id="TopShape"]
@@ -10,30 +10,32 @@ size = Vector2(1120, 20)
 [sub_resource type="RectangleShape2D" id="SideShape"]
 size = Vector2(20, 540)
 
-[node name="FinalBossArena" type="Node2D" unique_id=1151844491]
+[node name="FinalBossArena" type="Node2D"]
 script = ExtResource("1")
 
-[node name="Isaac" parent="." unique_id=2143548520 instance=ExtResource("2")]
+[node name="Isaac" parent="." instance=ExtResource("2")]
 position = Vector2(-300, 0)
 
-[node name="FinalBoss" parent="." unique_id=386863939 instance=ExtResource("3")]
+[node name="FinalBoss" parent="." instance=ExtResource("3")]
 position = Vector2(300, 0)
 room_half_extents = Vector2(500, 240)
 
-[node name="Walls" type="StaticBody2D" parent="." unique_id=641457630]
+[node name="Walls" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 1
 
-[node name="Top" type="CollisionShape2D" parent="Walls" unique_id=1383512615]
+[node name="Top" type="CollisionShape2D" parent="Walls"]
 position = Vector2(0, -270)
 shape = SubResource("TopShape")
 
-[node name="Bottom" type="CollisionShape2D" parent="Walls" unique_id=973474983]
+[node name="Bottom" type="CollisionShape2D" parent="Walls"]
 position = Vector2(0, 270)
 shape = SubResource("TopShape")
 
-[node name="Left" type="CollisionShape2D" parent="Walls" unique_id=2032541161]
+[node name="Left" type="CollisionShape2D" parent="Walls"]
 position = Vector2(-550, 0)
 shape = SubResource("SideShape")
 
-[node name="Right" type="CollisionShape2D" parent="Walls" unique_id=1248442512]
+[node name="Right" type="CollisionShape2D" parent="Walls"]
 position = Vector2(550, 0)
 shape = SubResource("SideShape")

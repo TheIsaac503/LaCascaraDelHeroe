@@ -1,0 +1,122 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://bkdvu6nnqq3le"]
+
+[ext_resource type="Texture2D" uid="uid://6r6ftexhgnsn" path="res://assets/sprites/minijefes_64/Arquis/recortados/vista_frente_01.png" id="Tex_1"]
+[ext_resource type="Texture2D" uid="uid://ds7k082tk8ao0" path="res://assets/sprites/minijefes_64/Arquis/recortados/vista_espalda_01.png" id="Tex_2"]
+[ext_resource type="Texture2D" uid="uid://d2fs18t6veypr" path="res://assets/sprites/minijefes_64/Arquis/recortados/vista_izquierda_01.png" id="Tex_3"]
+[ext_resource type="Texture2D" uid="uid://gykto5d0aael" path="res://assets/sprites/minijefes_64/Arquis/recortados/vista_derecha_01.png" id="Tex_5"]
+[ext_resource type="Texture2D" uid="uid://c7h7uycg1rley" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila1_01.png" id="Tex_6"]
+[ext_resource type="Texture2D" uid="uid://c4raqsoeracwn" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila1_02.png" id="Tex_7"]
+[ext_resource type="Texture2D" uid="uid://gsetvc4e4sh8" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila1_03.png" id="Tex_8"]
+[ext_resource type="Texture2D" uid="uid://i4lwpc454n3b" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila1_04.png" id="Tex_9"]
+[ext_resource type="Texture2D" uid="uid://ddqxu47bswg4a" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila1_05.png" id="Tex_10"]
+[ext_resource type="Texture2D" uid="uid://dywgf08qrp4ng" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila2_01.png" id="Tex_11"]
+[ext_resource type="Texture2D" uid="uid://cnas1gliq7fe5" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila2_02.png" id="Tex_12"]
+[ext_resource type="Texture2D" uid="uid://c44ffnlr8fjy1" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila2_03.png" id="Tex_13"]
+[ext_resource type="Texture2D" uid="uid://bnj4tjpftws7p" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila2_04.png" id="Tex_14"]
+[ext_resource type="Texture2D" uid="uid://c7n61tf4t6pef" path="res://assets/sprites/minijefes_64/Arquis/recortados/movimiento_fila2_05.png" id="Tex_15"]
+[ext_resource type="Texture2D" uid="uid://ccloouay4fgsk" path="res://assets/sprites/minijefes_64/Arquis/recortados/dano_01.png" id="Tex_16"]
+[ext_resource type="Texture2D" uid="uid://dkha6whdl6imv" path="res://assets/sprites/minijefes_64/Arquis/recortados/muerte_01.png" id="Tex_17"]
+[ext_resource type="Texture2D" uid="uid://c36fy61liuqfq" path="res://assets/sprites/minijefes_64/Arquis/recortados/ataque2_lanzador_bombas_03.png" id="Tex_20"]
+[ext_resource type="Texture2D" uid="uid://cs2l3owtv36r8" path="res://assets/sprites/minijefes_64/Arquis/recortados/ataque3_maquinas_01.png" id="Tex_23"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_20")
+}],
+"loop": 0,
+"name": &"ataque2",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_23")
+}],
+"loop": 0,
+"name": &"ataque3",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("Tex_15")
+}],
+"loop": 1,
+"name": &"caminar",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_16")
+}],
+"loop": 0,
+"name": &"dano",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_5")
+}],
+"loop": 0,
+"name": &"idle_derecha",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_2")
+}],
+"loop": 0,
+"name": &"idle_espalda",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_1")
+}],
+"loop": 0,
+"name": &"idle_frente",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_3")
+}],
+"loop": 0,
+"name": &"idle_izquierda",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("Tex_17")
+}],
+"loop": 0,
+"name": &"muerte",
+"speed": 8.0
+}]

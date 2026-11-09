@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://b0h5c1o2j7c54"]
 
 [ext_resource type="PackedScene" uid="uid://h4jmw108rm8t" path="res://scenes/player/Isaac.tscn" id="1_u1xfj"]
-[ext_resource type="PackedScene" uid="uid://c5wiqb0rsy1fb" path="res://scenes/enemies/Enemy.tscn" id="2_nha0i"]
-[ext_resource type="PackedScene" uid="uid://cs8nsm878l2w4" path="res://scenes/enemies/Arquero.tscn" id="3_1rhdn"]
-[ext_resource type="PackedScene" uid="uid://bclj1oxwekr3h" path="res://scenes/entities/ranged_enemy.tscn" id="3_gyg6b"]
+[ext_resource type="PackedScene" path="res://scenes/entities/bosses/Acalenia.tscn" id="2_gyg6b"]
 [ext_resource type="Script" uid="uid://b3eay21lhwuk" path="res://scripts/pause_menu.gd" id="3_q24mn"]
 [ext_resource type="Script" uid="uid://dhjixtlbi8cov" path="res://scripts/world_manager.gd" id="5_dc040"]
 
@@ -70,6 +68,10 @@ shape = SubResource("RectangleShape2D_uo5bh")
 position = Vector2(630, 0)
 shape = SubResource("RectangleShape2D_3jsg5")
 
+[node name="Acalenia" parent="Walls" unique_id=206572867 instance=ExtResource("2_gyg6b")]
+texture_filter = 1
+position = Vector2(232, 1)
+
 [node name="Pillar" type="StaticBody2D" parent="." unique_id=394339700]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Pillar" unique_id=6560132]
@@ -82,18 +84,6 @@ offset_top = -32.0
 offset_right = 32.0
 offset_bottom = 32.0
 color = Color(0.4509804, 0.48235294, 0.5137255, 1)
-
-[node name="Enemy" parent="." unique_id=1835640054 instance=ExtResource("2_nha0i")]
-position = Vector2(268, -83)
-
-[node name="Enemy2" parent="." unique_id=1901579896 instance=ExtResource("3_1rhdn")]
-position = Vector2(395, 69)
-metadata/_edit_group_ = true
-
-[node name="RangedEnemy" parent="." unique_id=53958601 instance=ExtResource("3_gyg6b")]
-position = Vector2(400, 0)
-collision_layer = 3
-collision_mask = 3
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1585643377]
 script = ExtResource("3_q24mn")
