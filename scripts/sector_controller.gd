@@ -5,11 +5,12 @@ extends Node2D
 @export var is_first_sector: bool = false
 @export var is_last_sector: bool = false
 
-const ROOM_WIDTH := 560.0
-const ROOM_HEIGHT := 360.0
+const ROOM_WIDTH := 1000.0
+const ROOM_HEIGHT := 620.0
 const WALL_THICKNESS := 24.0
-const DOOR_GAP := 104.0
+const DOOR_GAP := 150.0
 const ENEMY_SCENE := preload("res://scenes/enemies/Enemy.tscn")
+const ARCHER_SCENE := preload("res://scenes/enemies/Arquero.tscn")
 const NPC_SCRIPT := preload("res://scripts/rescue_npc.gd")
 const PORTAL_SCRIPT := preload("res://scripts/teleport_portal.gd")
 
@@ -31,6 +32,14 @@ var accent := {
 	"Creatividad": Color("#e2a7f0"),
 	"Amor": Color("#e88ba8")
 }
+
+# Progresión del sector: Sala 6 se desbloquea al derrotar el 80% de los enemigos normales.
+const BOSS_UNLOCK_PERCENT := 0.80
+var sector_enemy_total: int = 0
+var sector_enemy_defeated: int = 0
+var boss_entrance_blocker: StaticBody2D
+var boss_entrance_label: Label
+var boss_entrance_unlocked := false
 
 func _ready() -> void:
 	queue_redraw()
@@ -100,11 +109,22 @@ func _spawn_room_contents() -> void:
 		push_warning("El sector " + sector_type + " no tiene sus seis nodos Sala_1 a Sala_6.")
 		return
 	# Los enemigos se crean como hijos de su sala: no pueden perseguir a Isaac a otra.
+	# Salas ampliadas: encuentros más grandes y distribuidos.
 	var enemy_positions := {
-		2: [Vector2(-55, -25)],
-		3: [Vector2(-70, 25), Vector2(75, -25)],
-		4: [Vector2(-65, -35), Vector2(65, 35)],
-		5: [Vector2(-100, 0), Vector2(0, -35), Vector2(100, 20)]
+		1: [Vector2(-220, -100), Vector2(190, 90), Vector2(-40, 140)],
+		2: [Vector2(-280, -120), Vector2(-80, 100), Vector2(180, -80), Vector2(300, 130)],
+		3: [Vector2(-300, 0), Vector2(-120, -150), Vector2(80, 120), Vector2(280, -40), Vector2(20, 200)],
+		4: [Vector2(-320, -130), Vector2(-150, 130), Vector2(40, -170), Vector2(180, 80), Vector2(330, 160), Vector2(0, 0)],
+		5: [Vector2(-340, -150), Vector2(-220, 120), Vector2(-70, -30), Vector2(100, 150), Vector2(240, -120), Vector2(350, 40), Vector2(20, 230)]
+	}
+	# Arqueros añadidos a las salas de combate. Se colocan junto a enemigos
+	# normales para variar los encuentros sin sobrecargar las primeras salas.
+	var archer_positions := {
+		1: [Vector2(260, -140)],
+		2: [Vector2(0, -190), Vector2(360, 170)],
+		3: [Vector2(-360, 170), Vector2(330, -170)],
+		4: [Vector2(-300, 190), Vector2(300, -190)],
+		5: [Vector2(-360, 0), Vector2(360, 0), Vector2(0, -220)]
 	}
 	for room_number in enemy_positions.keys():
 		var room := get_node_or_null("Sala_" + str(room_number)) as Node2D
@@ -121,6 +141,25 @@ func _spawn_room_contents() -> void:
 			enemy.set("room_half_extents", enemy_extents)
 			room.add_child(enemy)
 			enemy.set("confined_center_global", room.global_position)
+			_track_sector_enemy(enemy)
+	# Crear arqueros como hijos de su propia sala para que no persigan a Isaac
+	# por todo el mapa ni disparen desde otros sectores.
+	for room_number in archer_positions.keys():
+		var room := get_node_or_null("Sala_" + str(room_number)) as Node2D
+		if room == null:
+			continue
+		for local_offset in archer_positions[room_number]:
+			var archer := ARCHER_SCENE.instantiate()
+			archer.position = local_offset
+			archer.set("confined_to_room", true)
+			var archer_extents := Vector2(ROOM_WIDTH / 2.0 - 42.0, ROOM_HEIGHT / 2.0 - 42.0)
+			var room_angle := absf(wrapf(room.global_rotation, -PI, PI))
+			if room_angle > PI / 4.0 and room_angle < 3.0 * PI / 4.0:
+				archer_extents = Vector2(archer_extents.y, archer_extents.x)
+			archer.set("room_half_extents", archer_extents)
+			room.add_child(archer)
+			archer.set("confined_center_global", room.global_position)
+			_track_sector_enemy(archer)
 	var npc := Node2D.new()
 	npc.name = "RescueNPC_" + sector_type
 	npc.set_script(NPC_SCRIPT)
@@ -159,8 +198,124 @@ func _spawn_boss() -> void:
 	boss_instance.position = Vector2.ZERO
 	boss_room.add_child(boss_instance)
 	boss_instance.set("confined_center_global", boss_room.global_position)
-	print("Minijefe ", boss_name, " colocado y limitado a la sala 6 del sector ", sector_type)
+
+	# El minijefe queda completamente inactivo hasta que Isaac entra en Sala_6.
+	# Así no puede perseguir, atacar ni ejecutar habilidades desde otro sector.
+	boss_instance.process_mode = Node.PROCESS_MODE_DISABLED
+	boss_instance.set_meta("battle_active", false)
+	_create_boss_entrance_blocker()
+	_create_boss_activation_zone(boss_room, boss_instance)
+
+	print("Minijefe ", boss_name, " colocado en Sala_6 e inactivo hasta que Isaac entre al sector.")
 	_spawn_teleport_portal(boss_room)
+
+func _track_sector_enemy(enemy: Node) -> void:
+	sector_enemy_total += 1
+	enemy.tree_exited.connect(func() -> void:
+		if not enemy.has_meta("sector_counted_defeat"):
+			enemy.set_meta("sector_counted_defeat", true)
+			sector_enemy_defeated += 1
+			_update_boss_unlock()
+	)
+
+func _update_boss_unlock() -> void:
+	if boss_entrance_unlocked or sector_enemy_total <= 0:
+		return
+	var progress := float(sector_enemy_defeated) / float(sector_enemy_total)
+	if progress >= BOSS_UNLOCK_PERCENT:
+		boss_entrance_unlocked = true
+		if is_instance_valid(boss_entrance_blocker):
+			boss_entrance_blocker.queue_free()
+		if is_instance_valid(boss_entrance_label):
+			boss_entrance_label.queue_free()
+		print("Sala 6 desbloqueada en ", sector_type, ": ", sector_enemy_defeated, "/", sector_enemy_total)
+
+func _create_boss_entrance_blocker() -> void:
+	var room5 := get_node_or_null("Sala_5") as Node2D
+	var room6 := get_node_or_null("Sala_6") as Node2D
+	if room5 == null or room6 == null:
+		return
+
+	# La barrera debe pertenecer a Sala_6. De esta manera, aunque las salas se
+	# reordenen manualmente en el editor, el bloqueo siempre queda pegado a la
+	# entrada real de la sala del minijefe y se mueve/rota junto con ella.
+	var room5_local := room6.to_local(room5.global_position)
+	var use_horizontal_entrance := absf(room5_local.x) >= absf(room5_local.y)
+
+	boss_entrance_blocker = StaticBody2D.new()
+	boss_entrance_blocker.name = "BossEntranceLocked_" + sector_type
+	boss_entrance_blocker.collision_layer = 1
+	boss_entrance_blocker.collision_mask = 1
+
+	var collision := CollisionShape2D.new()
+	var shape := RectangleShape2D.new()
+
+	if use_horizontal_entrance:
+		# Sala_5 está a la izquierda o derecha de Sala_6.
+		var side := signf(room5_local.x)
+		if is_zero_approx(side):
+			side = -1.0
+		boss_entrance_blocker.position = Vector2(
+			side * (ROOM_WIDTH / 2.0 - WALL_THICKNESS),
+			0.0
+		)
+		shape.size = Vector2(WALL_THICKNESS * 2.0, DOOR_GAP + 40.0)
+	else:
+		# Sala_5 está arriba o abajo de Sala_6.
+		var side := signf(room5_local.y)
+		if is_zero_approx(side):
+			side = -1.0
+		boss_entrance_blocker.position = Vector2(
+			0.0,
+			side * (ROOM_HEIGHT / 2.0 - WALL_THICKNESS)
+		)
+		shape.size = Vector2(DOOR_GAP + 40.0, WALL_THICKNESS * 2.0)
+
+	collision.shape = shape
+	boss_entrance_blocker.add_child(collision)
+	room6.add_child(boss_entrance_blocker)
+
+	boss_entrance_label = Label.new()
+	boss_entrance_label.name = "BossEntranceLabel_" + sector_type
+	boss_entrance_label.text = "SALA 6 BLOQUEADA\nDerrota al 80% de los enemigos"
+	boss_entrance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_entrance_label.size = Vector2(340, 60)
+	boss_entrance_label.modulate = accent.get(sector_type, Color.WHITE)
+
+	if use_horizontal_entrance:
+		boss_entrance_label.position = boss_entrance_blocker.position + Vector2(-170, -70)
+	else:
+		boss_entrance_label.position = boss_entrance_blocker.position + Vector2(-170, -70)
+
+	room6.add_child(boss_entrance_label)
+
+func _create_boss_activation_zone(boss_room: Node2D, boss_instance: Node) -> void:
+	var zone := Area2D.new()
+	zone.name = "BossActivationZone_" + sector_type
+	zone.collision_layer = 0
+	zone.collision_mask = 2
+	var collision := CollisionShape2D.new()
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(ROOM_WIDTH - 56.0, ROOM_HEIGHT - 56.0)
+	collision.shape = shape
+	zone.add_child(collision)
+	boss_room.add_child(zone)
+
+	zone.body_entered.connect(func(body: Node2D) -> void:
+		if not body.is_in_group("player"):
+			return
+		if not is_instance_valid(boss_instance):
+			zone.queue_free()
+			return
+		if not boss_entrance_unlocked:
+			return
+		if bool(boss_instance.get_meta("battle_active", false)):
+			return
+		boss_instance.set_meta("battle_active", true)
+		boss_instance.process_mode = Node.PROCESS_MODE_INHERIT
+		print("Combate iniciado contra ", boss_instance.get("boss_display_name"), " en el sector ", sector_type)
+		zone.queue_free()
+	)
 
 func _spawn_teleport_portal(boss_room: Node2D) -> void:
 	var portal := Area2D.new()

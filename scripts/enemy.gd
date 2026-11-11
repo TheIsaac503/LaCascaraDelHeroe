@@ -75,8 +75,8 @@ func _physics_process(delta: float) -> void:
 			global_position.x = clampf(global_position.x, confined_center_global.x - room_half_extents.x, confined_center_global.x + room_half_extents.x)
 			global_position.y = clampf(global_position.y, confined_center_global.y - room_half_extents.y, confined_center_global.y + room_half_extents.y)
 
-		# Detectar si Isaac está al alcance del ataque
-	if global_position.distance_to(player.global_position) < contact_range:
+		# Detectar si Isaac está al alcance del ataque solo si existe una referencia válida.
+	if is_instance_valid(player) and global_position.distance_to(player.global_position) < contact_range:
 		if contact_cooldown <= 0.0:
 			_attack_player()
 				

@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_controller"]
 [ext_resource type="Script" uid="uid://d1shwqo5t0u5y" path="res://scripts/room_editor.gd" id="2_room"]
-[ext_resource type="Texture2D" uid="uid://bf5wux13mmqcw" path="res://assets/sprites/sprites_sectores/puertas/puerta_orgullo.png" id="3_juofk"]
-[ext_resource type="Texture2D" uid="uid://cj0077o82gcqj" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_orgullo_02.png" id="4_i31xg"]
-[ext_resource type="Texture2D" uid="uid://b5mfthht8y6x7" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_orgullo_01.png" id="5_a7fon"]
-[ext_resource type="Texture2D" uid="uid://bhbxlrpasdeo3" path="res://assets/sprites/sprites_sectores/baldosas_pared_32x32/pared_orgullo_02.png" id="6_v23kd"]
-[ext_resource type="Texture2D" uid="uid://cwg437mroyv7g" path="res://assets/sprites/sprites_sectores/baldosas_pared_32x32/pared_orgullo_01.png" id="7_7s7bw"]
-[ext_resource type="Texture2D" uid="uid://cbnal4cxhi0m1" path="res://assets/sprites/sprites_sectores/referencia_salas/sala_orgullo.png" id="8_fycdn"]
+[ext_resource type="Texture2D" uid="uid://dakxiit7j4s6u" path="res://assets/sprites/sprites_sectores/puertas/puerta_orgullo.png" id="3_juofk"]
+[ext_resource type="Texture2D" uid="uid://dhn4dwxxfhmxq" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_orgullo_02.png" id="4_i31xg"]
+[ext_resource type="Texture2D" uid="uid://b3afrlohcdlic" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_orgullo_01.png" id="5_a7fon"]
+[ext_resource type="Texture2D" uid="uid://cfjxcy4ftf8fc" path="res://assets/sprites/sprites_sectores/baldosas_pared_32x32/pared_orgullo_02.png" id="6_v23kd"]
+[ext_resource type="Texture2D" uid="uid://bpoyjuj4kt2if" path="res://assets/sprites/sprites_sectores/baldosas_pared_32x32/pared_orgullo_01.png" id="7_7s7bw"]
+[ext_resource type="Texture2D" uid="uid://bjgqst88pcbx3" path="res://assets/sprites/sprites_sectores/referencia_salas/sala_orgullo.png" id="8_fycdn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3hs73"]
 texture = ExtResource("3_juofk")
@@ -402,6 +402,7 @@ script = ExtResource("1_controller")
 sector_type = "Orgullo"
 
 [node name="Sala_1" type="Node2D" parent="." unique_id=1533549481]
+position = Vector2(-1322, 42)
 script = ExtResource("2_room")
 sector_color = Color(0.266667, 0.211765, 0.305882, 1)
 accent_color = Color(0.768627, 0.647059, 0.909804, 1)
@@ -412,7 +413,7 @@ tile_map_data = PackedByteArray("AADt//T/AwAAAAAAAADt//X/AwAAAAEAAADu//T/AwABAAA
 tile_set = SubResource("TileSet_8cq3s")
 
 [node name="Sala_2" type="Node2D" parent="." unique_id=1930279636]
-position = Vector2(600, 0)
+position = Vector2(-315, 42)
 script = ExtResource("2_room")
 room_number = 2
 room_title = "PRIMER COMBATE"
@@ -424,7 +425,7 @@ tile_map_data = PackedByteArray("AADt//T/AwAAAAAAAADt//X/AwAAAAEAAADu//T/AwABAAA
 tile_set = SubResource("TileSet_8cq3s")
 
 [node name="Sala_3" type="Node2D" parent="." unique_id=534075583]
-position = Vector2(1200, 0)
+position = Vector2(691, 42)
 script = ExtResource("2_room")
 room_number = 3
 room_title = "PRISIONEROS"
@@ -436,7 +437,7 @@ tile_map_data = PackedByteArray("AADt//T/AwAAAAAAAADt//X/AwAAAAEAAADu//T/AwABAAA
 tile_set = SubResource("TileSet_8cq3s")
 
 [node name="Sala_4" type="Node2D" parent="." unique_id=1317531319]
-position = Vector2(1800, 0)
+position = Vector2(1697, 42)
 script = ExtResource("2_room")
 room_number = 4
 room_title = "ZONA PELIGROSA"
@@ -448,7 +449,7 @@ tile_map_data = PackedByteArray("AADt//T/AwAAAAAAAADt//X/AwAAAAEAAADu//T/AwABAAA
 tile_set = SubResource("TileSet_8cq3s")
 
 [node name="Sala_5" type="Node2D" parent="." unique_id=270136299]
-position = Vector2(2400, 0)
+position = Vector2(2704, 42)
 script = ExtResource("2_room")
 room_number = 5
 room_title = "ANTESALA DEL JEFE"
@@ -460,7 +461,7 @@ tile_map_data = PackedByteArray("AADt//T/AwAAAAAAAADt//X/AwAAAAEAAADu//T/AwABAAA
 tile_set = SubResource("TileSet_8cq3s")
 
 [node name="Sala_6" type="Node2D" parent="." unique_id=2002497637]
-position = Vector2(3000, 0)
+position = Vector2(3706, 42)
 script = ExtResource("2_room")
 room_number = 6
 room_title = "JEFE DEL SECTOR"

@@ -10,10 +10,10 @@ extends Node2D
 @export var show_top_door: bool = false
 @export var show_bottom_door: bool = false
 
-const W := 560.0
-const H := 360.0
+const W := 1000.0
+const H := 620.0
 const WALL := 24.0
-const GAP := 104.0
+const GAP := 150.0
 const FLOOR_TEXTURE: Texture2D = preload("res://assets/sprites/sprites_sectores/baldosas_suelo/suelo_creatividad_01.png")
 
 func _draw() -> void:
@@ -47,7 +47,7 @@ func _draw() -> void:
 	_draw_horizontal_door(H / 2.0, bool(show_bottom_door), stone)
 	# Juntas de los bloques del muro: relieve discreto, sin cubrir las puertas.
 	for wall_y in [-H / 2.0 + 5.0, H / 2.0 - 5.0]:
-		for block_x in range(0, 8):
+		for block_x in range(0, 14):
 			var bx := -W / 2.0 + float(block_x) * 72.0 + (12.0 if wall_y < 0.0 else 0.0)
 			draw_line(Vector2(bx, wall_y - 4.0), Vector2(bx, wall_y + 4.0), Color(0.08, 0.07, 0.10, 0.55), 2.0)
 	

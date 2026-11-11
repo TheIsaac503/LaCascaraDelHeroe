@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://br6r35xgm54it" path="res://scripts/sector_controller.gd" id="1_controller"]
 [ext_resource type="Script" uid="uid://d1shwqo5t0u5y" path="res://scripts/room_editor.gd" id="2_room"]
-[ext_resource type="Texture2D" uid="uid://bgdbcxsskyxp8" path="res://assets/sprites/sprites_sectores/baldosas_pared/pared_amor_01.png" id="3_yma1o"]
-[ext_resource type="Texture2D" uid="uid://gwwt7jr7ok07" path="res://assets/sprites/sprites_sectores/baldosas_pared/pared_amor_02.png" id="4_twoa6"]
-[ext_resource type="Texture2D" uid="uid://d4to7pn673eg" path="res://assets/sprites/sprites_sectores/puertas/puerta_amor.png" id="5_4lvq3"]
-[ext_resource type="Texture2D" uid="uid://be8k621ncuihj" path="res://assets/sprites/sprites_sectores/referencia_salas/sala_amor.png" id="6_l526c"]
-[ext_resource type="Texture2D" uid="uid://pxcmoll4wm7n" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_amor_02.png" id="7_i21mh"]
-[ext_resource type="Texture2D" uid="uid://b8tj68iqofg8y" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_amor_01.png" id="8_sqbw6"]
+[ext_resource type="Texture2D" uid="uid://b63xsxghyq5xf" path="res://assets/sprites/sprites_sectores/baldosas_pared/pared_amor_01.png" id="3_yma1o"]
+[ext_resource type="Texture2D" uid="uid://b08uk78tl1b4t" path="res://assets/sprites/sprites_sectores/baldosas_pared/pared_amor_02.png" id="4_twoa6"]
+[ext_resource type="Texture2D" uid="uid://ca6ynbmrdanlm" path="res://assets/sprites/sprites_sectores/puertas/puerta_amor.png" id="5_4lvq3"]
+[ext_resource type="Texture2D" uid="uid://c1lha46k8ckre" path="res://assets/sprites/sprites_sectores/referencia_salas/sala_amor.png" id="6_l526c"]
+[ext_resource type="Texture2D" uid="uid://ddpkk0lx37sk4" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_amor_02.png" id="7_i21mh"]
+[ext_resource type="Texture2D" uid="uid://d2j7ungghqlib" path="res://assets/sprites/sprites_sectores/baldosas_suelo_32x32/suelo_amor_01.png" id="8_sqbw6"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_47dwy"]
 texture = ExtResource("3_yma1o")
@@ -454,7 +454,7 @@ script = ExtResource("1_controller")
 sector_type = "Amor"
 
 [node name="Sala_1" type="Node2D" parent="." unique_id=650960018]
-position = Vector2(-46, -3)
+position = Vector2(-1917, 13)
 script = ExtResource("2_room")
 sector_color = Color(0.337255, 0.231373, 0.313725, 1)
 accent_color = Color(0.909804, 0.545098, 0.658824, 1)
@@ -465,7 +465,7 @@ tile_map_data = PackedByteArray("AADt//X/AQAAAAEAAADu//X/AQABAAEAAADv//T/AQAAAAA
 tile_set = SubResource("TileSet_dll7i")
 
 [node name="Sala_2" type="Node2D" parent="." unique_id=1350312425]
-position = Vector2(460, 0)
+position = Vector2(-88, 20)
 rotation = 1.5712742
 script = ExtResource("2_room")
 room_number = 2
@@ -481,7 +481,7 @@ tile_map_data = PackedByteArray("AADt//X/AQAAAAEAAADu//X/AQABAAEAAADv//T/AQAAAAA
 tile_set = SubResource("TileSet_dll7i")
 
 [node name="Sala_3" type="Node2D" parent="." unique_id=1883465899]
-position = Vector2(458, 476)
+position = Vector2(-90, 817)
 script = ExtResource("2_room")
 room_number = 3
 room_title = "PRISIONEROS"
@@ -496,7 +496,7 @@ tile_map_data = PackedByteArray("AADt//X/AQAAAAEAAADu//X/AQABAAEAAADv//T/AQAAAAA
 tile_set = SubResource("TileSet_dll7i")
 
 [node name="Sala_4" type="Node2D" parent="." unique_id=732536807]
-position = Vector2(923, 1)
+position = Vector2(-920, 12)
 script = ExtResource("2_room")
 room_number = 4
 room_title = "ZONA PELIGROSA"
@@ -508,7 +508,7 @@ tile_map_data = PackedByteArray("AADt//X/AQAAAAEAAADu//X/AQABAAEAAADv//T/AQAAAAA
 tile_set = SubResource("TileSet_dll7i")
 
 [node name="Sala_5" type="Node2D" parent="." unique_id=294923218]
-position = Vector2(1499, 0)
+position = Vector2(709, 23)
 script = ExtResource("2_room")
 room_number = 5
 room_title = "ANTESALA DEL JEFE"
@@ -520,7 +520,7 @@ tile_map_data = PackedByteArray("AADt//X/AQAAAAEAAADu//X/AQABAAEAAADv//T/AQAAAAA
 tile_set = SubResource("TileSet_dll7i")
 
 [node name="Sala_6" type="Node2D" parent="." unique_id=254132190]
-position = Vector2(2000.9999, 1)
+position = Vector2(1534, 24)
 rotation = 1.5698254
 script = ExtResource("2_room")
 room_number = 6

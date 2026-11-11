@@ -1,6 +1,6 @@
 extends Node2D
 
-const ROOM_WIDTH := 750.0
+const ROOM_WIDTH := 1300.0
 const ROOMS_PER_SECTOR := 6
 const SECTOR_SCENES := {
 	"Ira": "res://scenes/sectors/Ira_Sector.tscn",
