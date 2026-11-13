@@ -17,6 +17,8 @@ extends CharacterBody2D
 # Distancia (centro a centro) a la que el enemigo daña a Isaac al tocarlo.
 # Con enemigos grandes súbela: su colisión los mantiene más lejos de Isaac.
 @export var contact_range: float = 35.0
+# Distancia extra para detenerse antes de empujar físicamente a Isaac.
+@export var separation_margin: float = 12.0
 # Animación por código para sprites de un solo cuadro (minijefes).
 # pulse_amount: cuánto "respira" el sprite (0.03 = 3%). bob_amount: balanceo vertical en px.
 @export var pulse_amount: float = 0.0
@@ -59,17 +61,22 @@ func _physics_process(delta: float) -> void:
 
 	if is_instance_valid(player):
 		var target_position := player.global_position
+		var distance := global_position.distance_to(target_position)
 		var direction := global_position.direction_to(target_position)
+		# El enemigo no intenta ocupar la misma posición que Isaac.
+		# Se detiene antes del contacto para evitar que ambos cuerpos queden
+		# "pegados" por las colisiones mientras la IA sigue empujando.
+		var stop_distance := maxf(contact_range + separation_margin, 42.0)
 		# Si el enemigo está limitado a una sala, solo persigue cuando Isaac
 		# se encuentra dentro de los límites de esa misma sala.
 		if confined_to_room:
 			var player_in_room := absf(target_position.x - confined_center_global.x) <= room_half_extents.x and absf(target_position.y - confined_center_global.y) <= room_half_extents.y
-			if player_in_room:
+			if player_in_room and distance > stop_distance:
 				velocity = direction * speed
 			else:
 				velocity = Vector2.ZERO
 		else:
-			velocity = direction * speed
+			velocity = direction * speed if distance > stop_distance else Vector2.ZERO
 		move_and_slide()
 		if confined_to_room:
 			global_position.x = clampf(global_position.x, confined_center_global.x - room_half_extents.x, confined_center_global.x + room_half_extents.x)

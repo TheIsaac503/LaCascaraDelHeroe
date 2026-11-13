@@ -12,6 +12,7 @@ var confined_center_global: Vector2 = Vector2.ZERO
 
 @export_group("Movimiento")
 @export var movement_speed: float = 42.0
+@export var minimum_separation: float = 46.0
 @export var preferred_distance: float = 150.0
 @export var detection_range: float = 360.0
 
@@ -273,6 +274,10 @@ func _move_to_combat_distance() -> void:
 	var offset := player.global_position - global_position
 
 	var distance := offset.length()
+	if distance <= minimum_separation:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 
 	if distance > 0.001:

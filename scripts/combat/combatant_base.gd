@@ -32,6 +32,7 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void
 			velocity = push_direction * hurt_knockback
 
 	_play_animation_if_available("hurt")
+	_spawn_hit_sparks(global_position)
 
 	if health <= 0:
 		_defeat()
@@ -69,3 +70,23 @@ func _play_animation_if_available(animation_name: StringName) -> void:
 		return
 	if animated_sprite.sprite_frames.has_animation(animation_name):
 		animated_sprite.play(animation_name)
+
+
+func _spawn_hit_sparks(hit_position: Vector2) -> void:
+	var particles := CPUParticles2D.new()
+	particles.emitting = true
+	particles.one_shot = true
+	particles.explosiveness = 0.9
+	particles.amount = 12
+	particles.lifetime = 0.28
+	particles.direction = Vector2.ZERO
+	particles.spread = 180.0
+	particles.gravity = Vector2.ZERO
+	particles.initial_velocity_min = 70.0
+	particles.initial_velocity_max = 150.0
+	particles.scale_amount_min = 2.0
+	particles.scale_amount_max = 4.0
+	particles.color = Color("#ffe28a")
+	particles.global_position = hit_position
+	get_tree().current_scene.add_child(particles)
+	get_tree().create_timer(0.35).timeout.connect(particles.queue_free)

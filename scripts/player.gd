@@ -53,6 +53,11 @@ var healing_wait_timer: float = 0.0
 var healing_interval_timer: float = 0.0
 var healing_started: bool = false
 
+# Pociones y efectos temporales
+var speed_potion_timer: float = 0.0
+var speed_potion_multiplier: float = 1.0
+var potion_label: Label
+
 func _ready() -> void:
 	add_to_group("player")
 	apply_soul_fragment()
@@ -66,6 +71,7 @@ func _ready() -> void:
 	# Para saber cuándo terminan las animaciones de ataque y daño
 	sprite.animation_finished.connect(_on_animation_finished)
 	_play(_idle_name())
+	_build_potion_hud()
 
 	var bar := get_tree().get_first_node_in_group("player_health_bar")
 	if bar is ProgressBar:
@@ -79,6 +85,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	# Cooldowns
+	if speed_potion_timer > 0.0:
+		speed_potion_timer = maxf(0.0, speed_potion_timer - delta)
+		if speed_potion_timer <= 0.0:
+			speed_potion_multiplier = 1.0
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 	dash_cooldown_timer = maxf(0.0, dash_cooldown_timer - delta)
 
@@ -106,11 +116,27 @@ func _physics_process(delta: float) -> void:
 	if direction != Vector2.ZERO:
 		facing = direction
 
-	velocity = direction * speed
+	velocity = direction * speed * speed_potion_multiplier
 	move_and_slide()
 
 	_update_animation(direction)
 	queue_redraw()
+	_update_potion_hud()
+
+func _build_potion_hud() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 20
+	add_child(layer)
+	potion_label = Label.new()
+	potion_label.position = Vector2(20, 70)
+	potion_label.add_theme_font_size_override("font_size", 18)
+	potion_label.add_theme_color_override("font_color", Color("#f0e7d1"))
+	layer.add_child(potion_label)
+	_update_potion_hud()
+
+func _update_potion_hud() -> void:
+	if is_instance_valid(potion_label):
+		potion_label.text = "❤️ x%d [1]   ⚡ x%d [2]" % [int(GameData.potions.get("heal", 0)), int(GameData.potions.get("speed", 0))]
 
 # ---------------------------------------------------------------
 # ANIMACIONES
@@ -190,6 +216,22 @@ func _input(event: InputEvent) -> void:
 			use_equipped_ability(0)
 		elif event.keycode == KEY_R:
 			use_equipped_ability(1)
+		elif event.keycode == KEY_1:
+			use_potion("heal")
+		elif event.keycode == KEY_2:
+			use_potion("speed")
+
+func use_potion(kind: String) -> void:
+	if is_dead or not GameData.consume_potion(kind):
+		return
+	if kind == "heal":
+		health = mini(max_health, health + maxi(20, int(max_health * 0.35)))
+		health_changed.emit(health, max_health)
+		_show_ability_message("POCION DE CURACION")
+	elif kind == "speed":
+		speed_potion_multiplier = 1.45
+		speed_potion_timer = 8.0
+		_show_ability_message("VELOCIDAD +")
 
 func start_dash() -> void:
 	if is_dead or is_dashing or is_attacking or is_hurt:
@@ -324,6 +366,18 @@ func attack() -> void:
 		if facing.normalized().dot(direction_to_enemy) >= 0.35:
 			if node.has_method("take_damage"):
 				node.take_damage(total_damage, global_position)
+				_spawn_hit_effect(node.global_position)
+
+func _spawn_hit_effect(pos: Vector2) -> void:
+	var fx := Sprite2D.new()
+	fx.texture = preload("res://assets/rewards/effects (new)/hit_effect_anim_f0.png")
+	fx.global_position = pos
+	fx.scale = Vector2(2, 2)
+	get_tree().current_scene.add_child(fx)
+	var tween := create_tween()
+	tween.tween_property(fx, "scale", Vector2(3, 3), 0.12)
+	tween.parallel().tween_property(fx, "modulate:a", 0.0, 0.18)
+	tween.tween_callback(fx.queue_free)
 
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO) -> void:
 	if is_dead or is_dashing:
@@ -524,20 +578,20 @@ func _process_out_of_combat_healing(delta: float) -> void:
 		healing_started = false
 		return
 
-	# Esperar 5 segundos sin recibir daño
+	# Esperar 3 segundos sin recibir daño
 	if not healing_started:
 		healing_wait_timer += delta
 
-		if healing_wait_timer >= 5.0:
+		if healing_wait_timer >= 3.0:
 			healing_started = true
 			healing_interval_timer = 0.0
 
 		return
 
-	# Recuperar 4 puntos de vida cada 2 segundos
+	# Recuperar 4 puntos de vida cada 1 segundos
 	healing_interval_timer += delta
 
-	if healing_interval_timer >= 2.0:
+	if healing_interval_timer >= 1.0:
 		healing_interval_timer = 0.0
-		health = mini(health + 4, max_health)
+		health = mini(health + 5, max_health)
 		health_changed.emit(health, max_health)

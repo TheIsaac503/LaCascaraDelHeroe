@@ -13,6 +13,7 @@ const ENEMY_SCENE := preload("res://scenes/enemies/Enemy.tscn")
 const ARCHER_SCENE := preload("res://scenes/enemies/Arquero.tscn")
 const NPC_SCRIPT := preload("res://scripts/rescue_npc.gd")
 const PORTAL_SCRIPT := preload("res://scripts/teleport_portal.gd")
+const REWARD_CHEST_SCRIPT := preload("res://scripts/reward_chest.gd")
 
 var palette := {
 	"Ira": Color("#4b2928"),
@@ -166,7 +167,16 @@ func _spawn_room_contents() -> void:
 	npc.position = Vector2(0, 15)
 	npc.set("npc_name", "Prisionero de " + sector_type)
 	rooms[2].add_child(npc)
+	_spawn_reward_chest(rooms[4])
 	_spawn_boss()
+
+
+func _spawn_reward_chest(room: Node2D) -> void:
+	var chest := Area2D.new()
+	chest.name = "CofreRecompensa_" + sector_type
+	chest.set_script(REWARD_CHEST_SCRIPT)
+	chest.position = Vector2.ZERO
+	room.add_child(chest)
 
 func _spawn_boss() -> void:
 	var boss_name: String = str(GameData.active_bosses.get(sector_type, ""))

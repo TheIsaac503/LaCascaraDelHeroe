@@ -13,6 +13,7 @@ var confined_center_global: Vector2 = Vector2.ZERO
 
 @export_group("Movimiento")
 @export var movement_speed: float = 52.0
+@export var minimum_separation: float = 46.0
 @export var preferred_distance: float = 92.0
 
 @export_group("Ataques")
@@ -93,6 +94,10 @@ func _find_player() -> void:
 func _approach_player() -> void:
     var offset := player.global_position - global_position
     var distance := offset.length()
+    if distance <= minimum_separation:
+        velocity = Vector2.ZERO
+        move_and_slide()
+        return
     if distance > preferred_distance + 18.0:
         velocity = offset.normalized() * _current_speed()
     elif distance < preferred_distance - 22.0:

@@ -23,6 +23,7 @@ var confined_center_global := Vector2.ZERO
 @export_group("Movimiento")
 
 @export var movement_speed := 76.0
+@export var minimum_separation: float = 46.0
 
 
 @export_group("Ataques")
@@ -350,38 +351,27 @@ func _physics_process(delta: float) -> void:
 
 	if state == &"idle":
 
-		var offset := (
-			player.global_position
-			- global_position
-		)
+		var offset: Vector2 = player.global_position - global_position
+		var distance: float = offset.length()
 
-		var distance := offset.length()
-
-
-		if distance > 105.0:
-
-			last_direction = offset.normalized()
-
-			velocity = (
-				last_direction
-				* movement_speed
-			)
-
-			_play_walk()
-
+		if distance <= minimum_separation:
+			# No intentar ocupar la misma posición que Isaac.
+			velocity = Vector2.ZERO
+			_face_player()
+			_play_idle()
 			move_and_slide()
 
+		elif distance > 105.0:
+			last_direction = offset.normalized()
+			velocity = last_direction * movement_speed
+			_play_walk()
+			move_and_slide()
 			_clamp_room()
 
-
 		else:
-
 			velocity = Vector2.ZERO
-
 			_face_player()
-
 			_play_idle()
-
 			move_and_slide()
 
 

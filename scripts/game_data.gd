@@ -50,6 +50,7 @@ func reset_game() -> void:
 	starting_sector = ""
 	cleared_sectors.clear()
 	owned_fragments.clear()
+	potions = {"heal": 0, "speed": 0}
 	equipped_abilities = [selected_fragment, ""]
 
 func grant_soul_fragment(fragment_name: String) -> void:
@@ -90,6 +91,21 @@ func choose_fragment(fragment_name: String) -> void:
 		available_boss_fragments.append(fragment)
 	available_boss_fragments.shuffle()
 
+
+
+# Inventario rápido de pociones.
+var potions: Dictionary = {"heal": 0, "speed": 0}
+
+func add_potion(kind: String, amount: int = 1) -> void:
+	if not potions.has(kind):
+		potions[kind] = 0
+	potions[kind] = maxi(0, int(potions[kind]) + amount)
+
+func consume_potion(kind: String) -> bool:
+	if int(potions.get(kind, 0)) <= 0:
+		return false
+	potions[kind] = int(potions[kind]) - 1
+	return true
 
 func are_all_sectors_cleared() -> bool:
 	if sector_positions.is_empty():

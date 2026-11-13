@@ -9,6 +9,7 @@ class_name AcaleniaBoss
 var confined_center_global := Vector2.ZERO
 
 @export var movement_speed := 62.0
+@export var minimum_separation: float = 46.0
 @export var attack_cooldown := 2.2
 
 @export var whip_damage := 16
@@ -156,6 +157,8 @@ func _physics_process(delta: float) -> void:
 
 
 	var distance := global_position.distance_to(player.global_position)
+	if distance <= minimum_separation and state != &"spin":
+		velocity = Vector2.ZERO
 
 
 	# --------------------------------------------------

@@ -1,10 +1,10 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b64cxno1eqxgy"]
 
-[ext_resource type="Script" path="res://scripts/prison.gd" id="1_prison"]
-[ext_resource type="PackedScene" path="res://scenes/player/Isaac.tscn" id="2_isaac"]
+[ext_resource type="Script" uid="uid://djse7ghfxy1sa" path="res://scripts/prison.gd" id="1_prison"]
+[ext_resource type="PackedScene" uid="uid://h4jmw108rm8t" path="res://scenes/player/Isaac.tscn" id="2_isaac"]
 
-[node name="Prison" type="Node2D"]
+[node name="Prison" type="Node2D" unique_id=2117493823]
 script = ExtResource("1_prison")
 
-[node name="Isaac" parent="." instance=ExtResource("2_isaac")]
-position = Vector2(-225, 35)
+[node name="Isaac" parent="." unique_id=1041850528 instance=ExtResource("2_isaac")]
+position = Vector2(-209, 35)

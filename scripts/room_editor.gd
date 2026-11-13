@@ -14,7 +14,15 @@ const W := 1000.0
 const H := 620.0
 const WALL := 24.0
 const GAP := 150.0
-const FLOOR_TEXTURE: Texture2D = preload("res://assets/sprites/sprites_sectores/baldosas_suelo/suelo_creatividad_01.png")
+const FLOOR_TEXTURES := [
+    preload("res://assets/tiles/floor/floor_1.png"),
+    preload("res://assets/tiles/floor/floor_2.png"),
+    preload("res://assets/tiles/floor/floor_3.png"),
+    preload("res://assets/tiles/floor/floor_4.png")
+]
+const WALL_TEXTURE: Texture2D = preload("res://assets/tiles/wall/wall_1.png")
+const WALL_TOP_TEXTURE: Texture2D = preload("res://assets/tiles/wall/wall_top_1.png")
+const WALL_SIDE_TEXTURE: Texture2D = preload("res://assets/tiles/wall/wall_side_right.png")
 
 func _draw() -> void:
 	var rect := Rect2(-W / 2.0, -H / 2.0, W, H)
@@ -29,7 +37,8 @@ func _draw() -> void:
 		start_x = -W / 2.0
 		while start_x < W / 2.0:
 			var tile_rect := Rect2(start_x, start_y, tile_size, tile_size)
-			draw_texture_rect(FLOOR_TEXTURE, tile_rect, false, Color(1, 1, 1, 0.72))
+			var texture: Texture2D = FLOOR_TEXTURES[(row + col + room_number) % FLOOR_TEXTURES.size()]
+			draw_texture_rect(texture, tile_rect, false, Color(1, 1, 1, 0.92))
 			# Sutiles variaciones de piedra para que no parezca un patrón plano.
 			if (col + row) % 4 == 0:
 				draw_rect(Rect2(start_x + 5, start_y + 6, 3, 2), accent_color.darkened(0.45), false, 1.0)
@@ -77,19 +86,19 @@ func _draw() -> void:
 func _draw_side(x: float, door_open: bool, color: Color) -> void:
 	if door_open:
 		var segment := (H - GAP) / 2.0
-		draw_rect(Rect2(x - WALL / 2.0, -H / 2.0, WALL, segment), color)
-		draw_rect(Rect2(x - WALL / 2.0, GAP / 2.0, WALL, segment), color)
+		draw_texture_rect(WALL_SIDE_TEXTURE, Rect2(x - WALL / 2.0, -H / 2.0, WALL, segment), false, Color(1,1,1,0.95))
+		draw_texture_rect(WALL_SIDE_TEXTURE, Rect2(x - WALL / 2.0, GAP / 2.0, WALL, segment), false, Color(1,1,1,0.95))
 		# Marca visual de la puerta.
 		draw_line(Vector2(x, -GAP / 2.0), Vector2(x, GAP / 2.0), accent_color, 3.0)
 	else:
-		draw_rect(Rect2(x - WALL / 2.0, -H / 2.0, WALL, H), color)
+		draw_texture_rect(WALL_SIDE_TEXTURE, Rect2(x - WALL / 2.0, -H / 2.0, WALL, H), false, Color(1,1,1,0.95))
 
 func _draw_horizontal_door(y: float, door_open: bool, color: Color) -> void:
 	var segment := (W - GAP) / 2.0
 
 	if door_open:
-		draw_rect(Rect2(-W / 2.0, y, segment, WALL), color)
-		draw_rect(Rect2(GAP / 2.0, y, segment, WALL), color)
+		draw_texture_rect(WALL_TOP_TEXTURE, Rect2(-W / 2.0, y, segment, WALL), false, Color(1,1,1,0.95))
+		draw_texture_rect(WALL_TOP_TEXTURE, Rect2(GAP / 2.0, y, segment, WALL), false, Color(1,1,1,0.95))
 
 		draw_line(
 			Vector2(-GAP / 2.0, y + WALL / 2.0),
@@ -98,4 +107,4 @@ func _draw_horizontal_door(y: float, door_open: bool, color: Color) -> void:
 			3.0
 		)
 	else:
-		draw_rect(Rect2(-W / 2.0, y, W, WALL), color)
+		draw_texture_rect(WALL_TOP_TEXTURE, Rect2(-W / 2.0, y, W, WALL), false, Color(1,1,1,0.95))

@@ -19,6 +19,7 @@ var confined_center_global: Vector2 = Vector2.ZERO
 @export_group("Movimiento y ataques")
 
 @export var movement_speed: float = 38.0
+@export var minimum_separation: float = 46.0
 @export var preferred_distance: float = 175.0
 
 @export var attack_cooldown: float = 2.0
@@ -268,6 +269,10 @@ func _physics_process(delta: float) -> void:
 	var offset := player.global_position - global_position
 
 	var distance := offset.length()
+	if distance <= minimum_separation:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 
 	# Guardamos hacia dónde está Isaac.

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c5wiqb0rsy1fb"]
 
-[ext_resource type="Script" path="res://scripts/enemies/normal_enemy.gd" id="1_hpe7p"]
+[ext_resource type="Script" uid="uid://xhh1ndqxik1u" path="res://scripts/enemies/normal_enemy.gd" id="1_hpe7p"]
 [ext_resource type="Texture2D" uid="uid://bnxg8cjqae1en" path="res://assets/sprites/personaje/enemigos/Normales/Enemy_Animations/enemies-skeleton1_attack.png" id="2_73enu"]
 [ext_resource type="Texture2D" uid="uid://cmomdgnbkuggr" path="res://assets/sprites/personaje/enemigos/Normales/Enemy_Animations/enemies-skeleton1_idle.png" id="3_7iym1"]
 [ext_resource type="Texture2D" uid="uid://dj847b2uyuayj" path="res://assets/sprites/personaje/enemigos/Normales/Enemy_Animations/enemies-skeleton1_movement.png" id="4_7cewq"]
@@ -168,6 +168,7 @@ animations = [{
 
 [node name="Enemy" type="CharacterBody2D" unique_id=1835640054]
 scale = Vector2(1.5, 1.5)
+collision_layer = 5
 script = ExtResource("1_hpe7p")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1972349056]

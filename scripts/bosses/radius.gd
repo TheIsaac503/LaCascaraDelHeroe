@@ -20,6 +20,7 @@ var confined_center_global: Vector2 = Vector2.ZERO
 @export_group("Movimiento")
 
 @export var movement_speed: float = 58.0
+@export var minimum_separation: float = 46.0
 
 
 @export_group("Ataques")
@@ -394,6 +395,10 @@ func _physics_process(delta: float) -> void:
 
 
 	var distance := offset.length()
+	if distance <= minimum_separation:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 
 
 	if distance > 65.0:
